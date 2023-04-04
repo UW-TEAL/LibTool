@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-c2h(qs=k(ni+de6_3uko6bijdgvm=lkzp*s_%!*(u5m8!(j#@t
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '0.0.0.0'
+    '0.0.0.0' # Adding host address for railway deployment
 ]
 
 
