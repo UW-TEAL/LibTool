@@ -1,0 +1,10 @@
+# Ignore virtual environment
+venv/
+.venv/
+
+# Ignore pipenv files
+Pipfile
+Pipfile.lock
+
+# Ignore poetry files
+poetry.lock
