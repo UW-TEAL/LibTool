@@ -10,6 +10,7 @@
 	.btn-primary
 	{
 		background-color: #4b2e83 !important;
+		margin-top: 10px;
 	}
 	.btn-secondary
 	{
@@ -36,6 +37,26 @@
 		color: #4b2e83 !important;
 		opacity: 1 !important;
 	}
+	.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    border: 1px solid #ccc; /* Optional: for container border */
+    border-radius: 5px; /* Optional: for rounded corners */
+}
+.filter-field {
+    flex: 1 1 48%; /* Adjust this to control the width */
+    box-sizing: border-box;
+    padding: 5px; /* Adjust the spacing between fields */
+}
+.filter-field input, 
+.filter-field select {
+    width: 100%; /* Make input take full width of the container */
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 </style>
 <head>
 	<meta charset="UTF-8">
@@ -51,17 +72,17 @@
 		<div class="col">
 			<div class="card card-body">
 				<form method="get">
-					<div class="form-group">
-						{{myFilter.form}}
-					</div>					
+					<div class="filter-container">
+						{% for field in myFilter.form %}
+							<div class="filter-field">
+								{{ field.label_tag }} {{ field }}
+							</div>
+						{% endfor %}
+					</div>				
 					<button class="btn btn-primary" type="submit">
 						Search
 					</button>
-					<a href="{% url 'search' %}" style="    padding: 10px;
-					margin: 10px;
-					background: #85754d;
-					border-radius: 7px;
-					color: white !important;">
+					<a href="{% url 'search' %}" style="padding: 10px; margin: 30px 10px 10px 10px; background: #85754d; border-radius: 7px; color: white !important;">
 						Clear Search
 					</a>
 				</form>
