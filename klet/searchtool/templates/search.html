@@ -1,4 +1,5 @@
 {%  extends 'main.html' %}
+{% load static %}
 
 {% block content %}
 <style>
@@ -11,7 +12,7 @@
 	{
 		background-color: #4b2e83 !important;
 		margin-top: 10px;
-		
+
 	}
 	.btn-secondary
 	{
@@ -58,6 +59,12 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.clear-search-btn {
+    margin-top:10px;
+    background-color: #85754d;
+    color: white;
+}
 </style>
 <head>
 	<meta charset="UTF-8">
@@ -72,7 +79,7 @@
 	<div class="row" id="basicSearch"  style="display:none;">
 		<div class="col">
 			<div class="card card-body">
-				<form method="get">
+				<form method="get" id="search-form">
 					<div class="filter-container">
 						{% for field in myFilter.form %}
 							<div class="filter-field">
@@ -83,9 +90,9 @@
 					<button class="btn btn-primary" type="submit">
 						Search
 					</button>
-					<a href="{% url 'search' %}" style="padding: 10px; margin: 30px 10px 10px 10px; background: #85754d; border-radius: 7px; color: white !important;">
+					<button id="clear-search" class="btn clear-search-btn" type="button">
 						Clear Search
-					</a>
+					</button>
 				</form>
 			</div>
 			{% if Filters %}
@@ -108,83 +115,90 @@
 				<table class="table responsive" id="sort" cellspacing="0" width="100%">
 					<thead>
 						<tr>
-							<th>Genre</th>
-							<th>Author</th>
-							<th>Author(Eng)</th>
 							<th>Translation Title</th>
 							<th>Korean Title</th>
+							<th>Author (Kor)</th>
+							<th>Author (Eng)</th>
 							<th>Translator</th>
 							<th>Source</th>
 							<th>Publisher</th>
-							<th style="display: none;">authorEnglish2</th>
-							<th>WorldCat Search</th>
 							<th>Year</th>
+							<th>Genre</th>
+							<th>WorldCat Search</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for record in records %}
 						<tr>
-							{% if record.genre == "nan" %}
-							<td></td>
-							{% else %}
-							<td>{{record.genre}}</td>
-							{% endif %}	
-
-							{% if record.authorKorean == "nan" %}
-							<td></td>
-							{% else %}
-							<td>{{record.authorKorean}}</td>
-							{% endif %}			
-							
-							{% if record.authorEnglish == "nan" %}
-							<td></td>
-							{% else %}
-							<td>{{record.authorEnglish}}</td>
-							{% endif %}	
-
+							<!-- Translation Title -->
 							{% if record.workTitle == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.workTitle}}</td>
-							{% endif %}	
-
+							<td>{{ record.workTitle }}</td>
+							{% endif %}
+					
+							<!-- Korean Title -->
 							{% if record.workTitleKorean == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.workTitleKorean}}</td>
-							{% endif %}	
-
+							<td>{{ record.workTitleKorean }}</td>
+							{% endif %}
+					
+							<!-- Author Korean -->
+							{% if record.authorKorean == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.authorKorean }}</td>
+							{% endif %}
+					
+							<!-- Author English -->
+							{% if record.authorEnglish == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.authorEnglish }}</td>
+							{% endif %}
+					
+							<!-- Translator -->
 							{% if record.translator == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.translator}}</td>
+							<td>{{ record.translator }}</td>
 							{% endif %}
-
+					
+							<!-- Source -->
 							{% if record.sourceTitle == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.sourceTitle}}</td>
+							<td>{{ record.sourceTitle }}</td>
 							{% endif %}
-
+					
+							<!-- Publisher -->
 							{%if record.publisher == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.publisher}}</td>
-							{% endif %}	
-							<td class="d-flex justify-content-center" style="border-bottom: 0px;">
-								<a href="https://worldcat.org/search?q={{record.sourceTitle}}+{{record.publisher}}+{{record.year}}" target="_blank">
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
-										<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
-										<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
-									</svg>
-								</a>
-							</td>
+							<td>{{ record.publisher }}</td>
+							{% endif %}
+					
+							<!-- Year -->
 							{%if record.year == "nan" %}
 							<td></td>
 							{% else %}
-							<td>{{record.year}}</td>
+							<td>{{ record.year }}</td>
 							{% endif %}
-							<td style="display: none;">{{record.authorEnglish2}}</td>
+					
+							<!-- Genre -->
+							{% if record.genre == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.genre }}</td>
+							{% endif %}
+					
+							<!-- WorldCat Search -->
+							<td class="d-flex justify-content-center" style="border-bottom: 0px;">
+								<a href="https://worldcat.org/search?q={{ record.sourceTitle }}+{{ record.publisher }}+{{ record.year }}" target="_blank">
+									<img src="{% static 'searchtool/WorldCat Icon33.svg' %}" alt="WorldCat Icon" width="20" height="20" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 20 20">
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -273,6 +287,16 @@
 			document.getElementById('AdvSearch').className="btn btn-primary";
 			document.getElementById('AdvSearch').innerHTML="Advanced Search";
 		}
+		document.getElementById('clear-search').addEventListener('click', function(event) {
+			event.preventDefault();
+            var form = document.getElementById('search-form');
+            Array.from(form.elements).forEach(function(input) {
+                if (input.type === 'text' || input.type === 'select-one') {
+                    input.value = '';
+                }
+            });
+			form.submit();
+        });
 	});
 	function showDiv() {
 		if(document.getElementById('basicSearch').style.display == "none")
