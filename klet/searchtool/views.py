@@ -5,7 +5,7 @@ from .filters import *
 import uuid
 import numpy
 from .forms import *
-# Create your views here.
+from django.db.models import Q
 
 def home(request):
     return render(request,'home.html')
@@ -136,3 +136,27 @@ def changeAnything(request):
 def adminLogin(request):
     context = {'message': 'Admin Portal in making'}
     return render(request, 'admin.html', context)
+
+def search_view(request):
+    query = request.GET.get('query', '')
+    print("Query Received:", query)  # Get the query from the URL
+    if query:
+        # Filter your model results by the query across multiple fields
+        results = Record.objects.filter(
+            Q(authorEnglish__icontains=query) | 
+            Q(authorKorean__icontains=query) |
+            Q(workTitle__icontains=query) |
+            Q(workTitleKorean__icontains=query) |
+            Q(translator__icontains=query) |
+            Q(sourceTitle__icontains=query) |
+            Q(publisher__icontains=query) |
+            Q(year__icontains=query) |
+            Q(genre__icontains=query)
+            # Add more fields as needed
+        )
+    else:
+        results = Record.objects.all()  # If no query, return all results
+
+        
+
+    return render(request, 'search.html', {'results': results})
