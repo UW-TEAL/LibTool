@@ -35,8 +35,25 @@ def search(request):
     filters = {k: v for k, v in filters.items() if v}
     print(filters)
     records = myFilter.qs
-    context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters}
+    
+
+    query = request.GET.get('query', '')
+    if query:
+        # Filter your model results by the query across multiple fields
+        records = Record.objects.filter(
+            Q(authorEnglish__icontains=query) | 
+            Q(authorKorean__icontains=query) |
+            Q(workTitle__icontains=query) |
+            Q(workTitleKorean__icontains=query) |
+            Q(translator__icontains=query) |
+            Q(sourceTitle__icontains=query) |
+            Q(publisher__icontains=query) |
+            Q(year__icontains=query) |
+            Q(genre__icontains=query)
+            # Add more fields as needed
+        )
     # print(type(myFilter.form))
+    context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters}
     return render(request,'search.html',context)
 
 def generateAuthorLinks(names):

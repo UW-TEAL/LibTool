@@ -23,7 +23,6 @@ from searchtool.views import search_view
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("searchtool/", include('searchtool.urls')),
-    path('search/', search_view, name='search_view'),
 ]
 
 if settings.DEBUG:

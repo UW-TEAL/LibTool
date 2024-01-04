@@ -35,8 +35,16 @@
 		font-size: 15px;
 		line-height: 15px;
 		/* spac */
-		color: #4b2e83 !important;
-		opacity: 1 !important;
+		color: #381878 !important;
+		/*opacity: 1 !important; */
+	}
+
+	table.dataTable thead .sorting::after,
+	table.dataTable thead .sorting_asc::after,
+	table.dataTable thead .sorting_desc::after {
+		font-size: 16px;
+		;
+		/* Or any color that makes the arrows stand out */
 	}
 
 	.filter-container {
@@ -84,6 +92,22 @@
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
+<div class="col-lg-12" style="height: max-content;">
+	<div class="row">
+		<form id="searchbar" method="get" action="{% url 'search' %}" class="d-flex align-items-center">
+			<div class="form-group mb-2 d-flex flex-grow-1">
+				<input type="text" name="query" class="form-control" placeholder="Search...">
+				<button type="submit" class="btn btn-primary ml-2"
+					style="margin-top: -2px; margin-left: 10px;">Search</button>
+				<button type="button" id="AdvSearch" class="btn btn-primary ml-2" onclick="toggleAdvancedSearch()"
+					style="margin-top: -2px; margin-left: 10px;">
+					<img id="111" src="{% static 'searchtool/filter.svg' %}" alt="Advanced Search"
+						style="height: 20px;">
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
 <div class="col-lg-10" style="height: max-content;">
 	<div class="row" id="basicSearch" style="display:none;">
 		<div class="col">
@@ -118,13 +142,7 @@
 		</div>
 		<br>
 	</div>
-	<form method="get" action="{% url 'search_view' %}">
-		<!-- Replace 'search_view' with the name of your search view -->
-		<div class="form-group mb-2 d-flex">
-			<input type="text" name="query" class="form-control" placeholder="Search...">
-			<button type="submit" class="btn btn-primary ml-2" style="margin-top: -2px;">Search</button>
-		</div>
-	</form>
+
 	<div class="row">
 		<div class="col-md">
 			<div class="card card-body">
@@ -145,79 +163,82 @@
 					</thead>
 					<tbody>
 						{% if results %}
-							{% for record in results %}
-							<tr>
-								<!-- Translation Title -->
-								{% if record.workTitle == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.workTitle }}</td>
-								{% endif %}
-						
-								<!-- Korean Title -->
-								{% if record.workTitleKorean == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.workTitleKorean }}</td>
-								{% endif %}
-						
-								<!-- Author Korean -->
-								{% if record.authorKorean == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.authorKorean }}</td>
-								{% endif %}
-						
-								<!-- Author English -->
-								{% if record.authorEnglish == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.authorEnglish }}</td>
-								{% endif %}
-						
-								<!-- Translator -->
-								{% if record.translator == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.translator }}</td>
-								{% endif %}
-						
-								<!-- Source -->
-								{% if record.sourceTitle == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.sourceTitle }}</td>
-								{% endif %}
-						
-								<!-- Publisher -->
-								{%if record.publisher == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.publisher }}</td>
-								{% endif %}
-						
-								<!-- Year -->
-								{%if record.year == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.year }}</td>
-								{% endif %}
-						
-								<!-- Genre -->
-								{% if record.genre == "nan" %}
-								<td></td>
-								{% else %}
-								<td>{{ record.genre }}</td>
-								{% endif %}
-						
-								<!-- WorldCat Search -->
-								<td class="d-flex justify-content-center" style="border-bottom: 0px;">
-									<a href="https://worldcat.org/search?q={{ record.sourceTitle }}+{{ record.publisher }}+{{ record.year }}" target="_blank">
-										<img src="{% static 'searchtool/WorldCat Icon33.svg' %}" alt="WorldCat Icon" width="20" height="20" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 20 20">
-									</a>
-								</td>
-							</tr>
-							{% endfor %}
+						{% for record in results %}
+						<tr>
+							<!-- Translation Title -->
+							{% if record.workTitle == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.workTitle }}</td>
+							{% endif %}
+
+							<!-- Korean Title -->
+							{% if record.workTitleKorean == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.workTitleKorean }}</td>
+							{% endif %}
+
+							<!-- Author Korean -->
+							{% if record.authorKorean == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.authorKorean }}</td>
+							{% endif %}
+
+							<!-- Author English -->
+							{% if record.authorEnglish == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.authorEnglish }}</td>
+							{% endif %}
+
+							<!-- Translator -->
+							{% if record.translator == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.translator }}</td>
+							{% endif %}
+
+							<!-- Source -->
+							{% if record.sourceTitle == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.sourceTitle }}</td>
+							{% endif %}
+
+							<!-- Publisher -->
+							{%if record.publisher == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.publisher }}</td>
+							{% endif %}
+
+							<!-- Year -->
+							{%if record.year == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.year }}</td>
+							{% endif %}
+
+							<!-- Genre -->
+							{% if record.genre == "nan" %}
+							<td></td>
+							{% else %}
+							<td>{{ record.genre }}</td>
+							{% endif %}
+
+							<!-- WorldCat Search -->
+							<td class="d-flex justify-content-center" style="border-bottom: 0px;">
+								<a href="https://worldcat.org/search?q={{ record.sourceTitle }}+{{ record.publisher }}+{{ record.year }}"
+									target="_blank">
+									<img src="{% static 'searchtool/WorldCat Icon33.svg' %}" alt="WorldCat Icon"
+										width="20" height="20" fill="currentColor" class="bi bi-link-45deg"
+										viewBox="0 0 20 20">
+								</a>
+							</td>
+						</tr>
+						{% endfor %}
 						{% else %}
 						{% for record in records %}
 						<tr>
@@ -309,8 +330,10 @@
 </div>
 <div class="col-lg-2">
 	<div class="row">
-		<button type="button" id="AdvSearch" class="btn btn-primary" onclick="showDiv()">Advanced Search</button>
 		<div class="col">
+			<div id="customSearchBox" class="custom-search-box">
+				<!-- The search box from DataTables will be moved here -->
+			</div>
 			<h4>Authors Korean</h4>
 			<div class="card card-body overflow-auto" style="height: 250px;">
 				<ul>
@@ -363,6 +386,12 @@
 			"pageLength": 100,
 			"lengthMenu": [50, 100, 200, 300, 400, 500],
 		});
+		$("#customSearchBox").html($("#sort_filter"));
+		$("#sort_wrapper .dataTables_filter label").contents().filter(function () {
+			return this.nodeType === 3; //Node.TEXT_NODE
+		}).each(function () {
+			this.textContent = this.textContent.replace('Search:', 'New Label Text:');
+		});
 		document.getElementsByClassName("form-control").style = "width:500px;background-color:#CBDCFF";
 		document.getElementsByClassName("form-control-sm").style = "width:500px;background-color:#CBDCFF";
 		document.getElementsByClassName("form-control").placeholder = "Search for any key word";
@@ -391,19 +420,32 @@
 			});
 			form.submit();
 		});
+		toggleAdvancedSearch();
 	});
-	function showDiv() {
-		if (document.getElementById('basicSearch').style.display == "none") {
-			document.getElementById('basicSearch').style.display = "block";
-			document.getElementById('AdvSearch').className = "btn btn-secondary";
-			document.getElementById('AdvSearch').innerHTML = "Search";
-		}
-		else {
-			document.getElementById('basicSearch').style.display = "none";
-			document.getElementById('AdvSearch').className = "btn btn-primary";
-			document.getElementById('AdvSearch').innerHTML = "Advanced Search";
+
+	function toggleAdvancedSearch() {
+		console.log("Toggle function called"); // Check if function is called
+		var advSearchDiv = document.getElementById('basicSearch');
+		var advSearchBtn = document.getElementById('AdvSearch');
+		var advSearchIcon = document.getElementById('111');
+
+		console.log("Div:", advSearchDiv); // Check if elements are found
+		console.log("Button:", advSearchBtn);
+		console.log("Icon:", advSearchIcon);
+
+		if (advSearchDiv.style.display === "none") {
+			advSearchDiv.style.display = "block";
+			advSearchBtn.className = "btn btn-secondary";
+			advSearchIcon.src = "{% static 'searchtool/arrow_up.svg' %}"; // Change to arrow up icon
+		} else {
+			advSearchDiv.style.display = "none";
+			advSearchBtn.className = "btn btn-primary";
+			advSearchIcon.src = "{% static 'searchtool/filter.svg' %}"; // Change to filter icon
 		}
 	}
+
+
+
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
