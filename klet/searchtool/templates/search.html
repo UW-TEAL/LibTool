@@ -334,6 +334,8 @@
 			<div id="customSearchBox" class="custom-search-box">
 				<!-- The search box from DataTables will be moved here -->
 			</div>
+			<label for="miniSearchInput">Mini Search:</label>
+			<input type="text" id="miniSearchInput" placeholder="Type to search...">
 			<h4>Authors Korean</h4>
 			<div class="card card-body overflow-auto" style="height: 250px;">
 				<ul>
@@ -382,16 +384,15 @@
 	$(document).ready(function () {
 		let inputUrl = new URL(window.location.href);
 		let inputParams = new URLSearchParams(inputUrl.search);
-		$("#sort").DataTable({
+		var table = $("#sort").DataTable({
 			"pageLength": 100,
-			"lengthMenu": [50, 100, 200, 300, 400, 500],
+			"lengthMenu": [50, 100, 200, 300, 400, 500]
 		});
 		$("#customSearchBox").html($("#sort_filter"));
-		$("#sort_wrapper .dataTables_filter label").contents().filter(function () {
-			return this.nodeType === 3; //Node.TEXT_NODE
-		}).each(function () {
-			this.textContent = this.textContent.replace('Search:', 'New Label Text:');
+		$('#miniSearchInput').on('keyup', function () {
+			table.search(this.value).draw();
 		});
+
 		document.getElementsByClassName("form-control").style = "width:500px;background-color:#CBDCFF";
 		document.getElementsByClassName("form-control-sm").style = "width:500px;background-color:#CBDCFF";
 		document.getElementsByClassName("form-control").placeholder = "Search for any key word";
@@ -433,7 +434,7 @@
 		console.log("Button:", advSearchBtn);
 		console.log("Icon:", advSearchIcon);
 
-		if (advSearchDiv.style.display === "none") {
+		if (advSearchDiv.style.display !== "block") {
 			advSearchDiv.style.display = "block";
 			advSearchBtn.className = "btn btn-secondary";
 			advSearchIcon.src = "{% static 'searchtool/arrow_up.svg' %}"; // Change to arrow up icon
