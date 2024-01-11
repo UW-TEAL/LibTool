@@ -78,11 +78,11 @@ WSGI_APPLICATION = "klet.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": BASE_DIR / "db.mysql",
+        "NAME": "db_name",
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',  # Or your database server (e.g., AWS RDS endpoint)
-        'PORT': '3306s',
+        'PORT': '3306',
     }
 }
 
