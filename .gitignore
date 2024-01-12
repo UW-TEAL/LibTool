@@ -1,7 +1,7 @@
 # Ignore virtual environment
-venv/
+./venv/
 .venv/
-
+C:\Users\user\LibTool\venv
 # Ignore pipenv files
 Pipfile
 Pipfile.lock
