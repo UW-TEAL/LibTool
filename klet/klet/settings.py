@@ -78,9 +78,9 @@ WSGI_APPLICATION = "klet.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "db_name",
+        "NAME": "tealdb",
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'root',
         'HOST': 'localhost',  # Or your database server (e.g., AWS RDS endpoint)
         'PORT': '3306',
     }
