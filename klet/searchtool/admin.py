@@ -9,4 +9,4 @@ class ModelAdmin(admin.ModelAdmin):
     search_fields = ['authorKorean', 'authorEnglish', 'workTitle', 'genre', 'translator', 'sourceTitle', 'publisher', 'year', 'yearCreated', 'authorEnglish2', 'uid2']
     list_per_page = 10
 
-admin.site.register(Record)
+admin.site.register(Record, ModelAdmin)
