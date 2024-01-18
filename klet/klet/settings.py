@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "django_filters",
     "searchtool",
-    'import_export'
     #Default
     "django.contrib.admin",
     "django.contrib.auth",
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'import_export'
 ]
 
 MIDDLEWARE = [
