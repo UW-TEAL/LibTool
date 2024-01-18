@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "django_filters",
     "searchtool",
+    'import_export'
     #Default
     "django.contrib.admin",
     "django.contrib.auth",
