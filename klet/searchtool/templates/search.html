@@ -1,4 +1,4 @@
-{%  extends 'main.html' %}
+{% extends 'main.html' %}
 {% load static %}
 
 {% block content %}
@@ -8,85 +8,94 @@
     font-family: myFirstFont;
     src: url(ArianaVioleta-dz2K.ttf);
 	} */
-	.btn-primary
-	{
+	.btn-primary {
 		background-color: #4b2e83 !important;
 		margin-top: 10px;
 
 	}
-	.btn-secondary
-	{
+
+	.btn-secondary {
 		background-color: #85754d !important;
 	}
-	.pagination
-	{
+
+	.pagination {
 		--bs-pagination-active-bg: #4b2e83 !important;
 	}
-	.pagination>.active>a
-	{
+
+	.pagination>.active>a {
 		background-color: #4b2e83 !important;
-		color: white  !important;
+		color: white !important;
 	}
-	a
-	{
-		color:  #4b2e83 !important;
+
+	a {
+		color: #4b2e83 !important;
 	}
-	.sorting
-	{
+
+	.sorting {
 		font-size: 15px;
 		line-height: 15px;
 		/* spac */
 		color: #4b2e83 !important;
 		opacity: 1 !important;
 	}
-	.filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 10px;
-    border: 1px solid #ccc; /* Optional: for container border */
-    border-radius: 5px; /* Optional: for rounded corners */
-}
-.filter-field {
-    flex: 1 1 48%; /* Adjust this to control the width */
-    box-sizing: border-box;
-    padding: 5px; /* Adjust the spacing between fields */
-}
-.filter-field input, 
-.filter-field select {
-    width: 100%; /* Make input take full width of the container */
-    padding: 5px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
 
-.clear-search-btn {
-    margin-top:10px;
-    background-color: #85754d;
-    color: white;
-}
+	.filter-container {
+		display: flex;
+		flex-wrap: wrap;
+		padding: 10px;
+		border: 1px solid #ccc;
+		/* Optional: for container border */
+		border-radius: 5px;
+		/* Optional: for rounded corners */
+	}
+
+	.filter-field {
+		flex: 1 1 48%;
+		/* Adjust this to control the width */
+		box-sizing: border-box;
+		padding: 5px;
+		/* Adjust the spacing between fields */
+	}
+
+	.filter-field input,
+	.filter-field select {
+		width: 100%;
+		/* Make input take full width of the container */
+		padding: 5px;
+		margin: 5px 0;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
+	.clear-search-btn {
+		margin-top: 10px;
+		background-color: #85754d;
+		color: white;
+	}
 </style>
+
 <head>
 	<meta charset="UTF-8">
 	<!-- <link rel="stylesheet" href='/searchtool/templates/style/customstyle.css'> -->
-	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-	<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,500" rel="stylesheet"/>
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+	<link rel='stylesheet'
+		href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,500" rel="stylesheet" />
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <div class="col-lg-10" style="height: max-content;">
-	<div class="row" id="basicSearch"  style="display:none;">
+	<div class="row" id="basicSearch" style="display:none;">
 		<div class="col">
 			<div class="card card-body">
 				<form method="get" id="search-form">
 					<div class="filter-container">
 						{% for field in myFilter.form %}
-							<div class="filter-field">
-								{{ field.label_tag }} {{ field }}
-							</div>
+						<div class="filter-field">
+							{{ field.label_tag }} {{ field }}
+						</div>
 						{% endfor %}
-					</div>				
+					</div>
 					<button class="btn btn-primary" type="submit">
 						Search
 					</button>
@@ -96,14 +105,14 @@
 				</form>
 			</div>
 			{% if Filters %}
-				<div>
-					<h4>Active Filters</h4>
-					{% for k in Filters %}
-						<button class="btn btn-primary">
-							{{k}}{{Filters.k}}
-						</button>
-					{% endfor %}
-				</div>
+			<div>
+				<h4>Active Filters</h4>
+				{% for k in Filters %}
+				<button class="btn btn-primary">
+					{{k}}{{Filters.k}}
+				</button>
+				{% endfor %}
+			</div>
 			{% endif %}
 			<!-- <h3>{{Filters}}</h3> -->
 		</div>
@@ -111,7 +120,10 @@
 	</div>
 	<div class="row">
 		<div class="col-md">
-			<div class="card card-body" >
+			<div class="card card-body">
+				<div id="customSearchContainer" class="mb-3">
+					<input type="text" id="customSearchBox" placeholder="Search..." class="form-control">
+				</div>
 				<table class="table responsive" id="sort" cellspacing="0" width="100%">
 					<thead>
 						<tr>
@@ -136,67 +148,70 @@
 							{% else %}
 							<td>{{ record.workTitle }}</td>
 							{% endif %}
-					
+
 							<!-- Korean Title -->
 							{% if record.workTitleKorean == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.workTitleKorean }}</td>
 							{% endif %}
-					
+
 							<!-- Author Korean -->
 							{% if record.authorKorean == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.authorKorean }}</td>
 							{% endif %}
-					
+
 							<!-- Author English -->
 							{% if record.authorEnglish == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.authorEnglish }}</td>
 							{% endif %}
-					
+
 							<!-- Translator -->
 							{% if record.translator == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.translator }}</td>
 							{% endif %}
-					
+
 							<!-- Source -->
 							{% if record.sourceTitle == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.sourceTitle }}</td>
 							{% endif %}
-					
+
 							<!-- Publisher -->
 							{%if record.publisher == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.publisher }}</td>
 							{% endif %}
-					
+
 							<!-- Year -->
 							{%if record.year == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.year }}</td>
 							{% endif %}
-					
+
 							<!-- Genre -->
 							{% if record.genre == "nan" %}
 							<td></td>
 							{% else %}
 							<td>{{ record.genre }}</td>
 							{% endif %}
-					
+
 							<!-- WorldCat Search -->
 							<td class="d-flex justify-content-center" style="border-bottom: 0px;">
-								<a href="https://worldcat.org/search?q={{ record.sourceTitle }}+{{ record.publisher }}+{{ record.year }}" target="_blank">
-									<img src="{% static 'searchtool/WorldCat Icon33.svg' %}" alt="WorldCat Icon" width="20" height="20" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 20 20">
+								<a href="https://worldcat.org/search?q={{ record.sourceTitle }}+{{ record.publisher }}+{{ record.year }}"
+									target="_blank">
+									<img src="{% static 'searchtool/WorldCat Icon33.svg' %}" alt="WorldCat Icon"
+										width="20" height="20" fill="currentColor" class="bi bi-link-45deg"
+										viewBox="0 0 20 20">
 								</a>
 							</td>
 						</tr>
@@ -208,8 +223,12 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js'></script>
-		<script  src="function.js"></script>
+		<script src="{% static 'js/jquery.mark.min.js' %}"></script>
+		<script>
+			console.log('mark function:', $.fn.mark);
+			console.log('unmark function:', $.fn.unmark);
+		  </script>
+
 	</div>
 </div>
 <div class="col-lg-2">
@@ -220,7 +239,7 @@
 			<div class="card card-body overflow-auto" style="height: 250px;">
 				<ul>
 					{% for krName in NamesKr %}
-						<a class="row" href="{% url 'search' %}?authorKorean={{krName}}">{{krName}}</a>
+					<a class="row" href="{% url 'search' %}?authorKorean={{krName}}">{{krName}}</a>
 					{% endfor %}
 				</ul>
 			</div>
@@ -228,7 +247,7 @@
 			<div class="card card-body overflow-auto" style="height: 250px; margin-bottom: 15px;">
 				<ul>
 					{% for engName in NamesEng %}
-						<a class="row" href="{% url 'search' %}?authorEnglish2={{engName}}">{{engName}}</a>
+					<a class="row" href="{% url 'search' %}?authorEnglish2={{engName}}">{{engName}}</a>
 					{% endfor %}
 				</ul>
 			</div>
@@ -237,82 +256,114 @@
 		<!-- <button class="btn btn-primary" >New Record</button> -->
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
 			New Record
-		</button>		
-		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		</button>
+		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+			aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">New record request form</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLongTitle">New record request form</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						Form to fill and request the new record will appear here soon!!
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Submit</button>
+					</div>
 				</div>
-				<div class="modal-body">
-				Form to fill and request the new record will appear here soon!!
-				</div>
-				<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Submit</button>
-				</div>
-			</div>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
-	$(document).ready(function() {
-		let inputUrl = new URL(window.location.href);
-		let inputParams = new URLSearchParams(inputUrl.search);
-		$("#sort").DataTable({
-			"pageLength": 100,
-			"lengthMenu": [ 50, 100, 200, 300, 400, 500 ],
-		});
-		document.getElementsByClassName("form-control").style="width:500px;background-color:#CBDCFF";
-		document.getElementsByClassName("form-control-sm").style="width:500px;background-color:#CBDCFF";
-		document.getElementsByClassName("form-control").placeholder="Search for any key word";
-		document.getElementsByClassName("form-control-sm").placeholder="Search for any key word";
-		$('#exampleModalCenter').on('shown.bs.modal', function () {
-				$('#myInput').trigger('focus')
-		})
-		if(inputParams.has("authorEnglish2"))
-		{
-			console.log("Are we here?");
-			document.getElementById('basicSearch').style.display = "block";
-			document.getElementById('AdvSearch').className="btn btn-secondary";
-			document.getElementById('AdvSearch').innerHTML="Search";
-		}
-		else
-		{
-			document.getElementById('basicSearch').style.display = "none";
-			document.getElementById('AdvSearch').className="btn btn-primary";
-			document.getElementById('AdvSearch').innerHTML="Advanced Search";
-		}
-		document.getElementById('clear-search').addEventListener('click', function(event) {
-			event.preventDefault();
-            var form = document.getElementById('search-form');
-            Array.from(form.elements).forEach(function(input) {
-                if (input.type === 'text' || input.type === 'select-one') {
-                    input.value = '';
+$(document).ready(function() {
+	function loadMarkJs(callback) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "{% static 'js/jquery.mark.min.js' %}"; // Adjust the path as necessary
+        script.onload = function() {
+            if (typeof callback === "function") {
+                callback();
+            }
+        };
+        document.getElementsByTagName("head")[0].appendChild(script);
+    }
+
+    // Load mark.js and then initialize your DataTable and use mark.js functions
+    loadMarkJs(function() {
+        console.log('mark.js has been loaded successfully');
+        // Now you can safely use $.fn.mark and $.fn.unmark
+        console.log($.fn.mark);   // Should log the function
+        console.log($.fn.unmark); // Should log the function
+
+        // Initialize your DataTable here
+        var table = $('#sort').DataTable({
+            "dom": '<"top"i>rt<"bottom"lp><"clear">',
+            "pageLength": 100,
+            "lengthMenu": [50, 100, 200, 300, 400, 500],
+        });
+
+        $('#customSearchBox').on('keyup', function() {
+            var searchTerm = this.value;
+            table.search(searchTerm).draw();
+        });
+
+        table.on('draw', function() {
+            var searchTerm = $('#customSearchBox').val().trim();
+            // Ensure you unmark before marking to avoid duplicating marks
+            $('#sort tbody').unmark({
+                done: function(){
+                    $('#sort tbody').mark(searchTerm);
                 }
             });
-			form.submit();
         });
+
+		document.getElementsByClassName("form-control").style = "width:500px;background-color:#CBDCFF";
+		document.getElementsByClassName("form-control-sm").style = "width:500px;background-color:#CBDCFF";
+		document.getElementsByClassName("form-control").placeholder = "Search for any key word";
+		document.getElementsByClassName("form-control-sm").placeholder = "Search for any key word";
+		$('#exampleModalCenter').on('shown.bs.modal', function () {
+			$('#myInput').trigger('focus')
+		})
+		if (inputParams.has("authorEnglish2")) {
+			console.log("Are we here?");
+			document.getElementById('basicSearch').style.display = "block";
+			document.getElementById('AdvSearch').className = "btn btn-secondary";
+			document.getElementById('AdvSearch').innerHTML = "Search";
+		}
+		else {
+			document.getElementById('basicSearch').style.display = "none";
+			document.getElementById('AdvSearch').className = "btn btn-primary";
+			document.getElementById('AdvSearch').innerHTML = "Advanced Search";
+		}
+		document.getElementById('clear-search').addEventListener('click', function (event) {
+			event.preventDefault();
+			var form = document.getElementById('search-form');
+			Array.from(form.elements).forEach(function (input) {
+				if (input.type === 'text' || input.type === 'select-one') {
+					input.value = '';
+				}
+			});
+			form.submit();
+		});
 	});
 	function showDiv() {
-		if(document.getElementById('basicSearch').style.display == "none")
-		{
+		if (document.getElementById('basicSearch').style.display == "none") {
 			document.getElementById('basicSearch').style.display = "block";
-			document.getElementById('AdvSearch').className="btn btn-secondary";
-			document.getElementById('AdvSearch').innerHTML="Search";
+			document.getElementById('AdvSearch').className = "btn btn-secondary";
+			document.getElementById('AdvSearch').innerHTML = "Back to Search";
 		}
-		else
-		{
+		else {
 			document.getElementById('basicSearch').style.display = "none";
-			document.getElementById('AdvSearch').className="btn btn-primary";
-			document.getElementById('AdvSearch').innerHTML="Advanced Search";
+			document.getElementById('AdvSearch').className = "btn btn-primary";
+			document.getElementById('AdvSearch').innerHTML = "Advanced Search";
 		}
 	}
+});
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 {% endblock %}
