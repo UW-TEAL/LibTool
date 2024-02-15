@@ -227,7 +227,85 @@
 		<script>
 			console.log('mark function:', $.fn.mark);
 			console.log('unmark function:', $.fn.unmark);
-		  </script>
+		</script>
+		<script>
+function showDiv() {
+    var basicSearch = $('#basicSearch');
+    var advSearchBtn = $('#AdvSearch');
+
+    if (basicSearch.css('display') === "none") {
+        basicSearch.show();
+        advSearchBtn.addClass('btn-secondary').removeClass('btn-primary').text("Back to Search");
+    } else {
+        basicSearch.hide();
+        advSearchBtn.addClass('btn-primary').removeClass('btn-secondary').text("Advanced Search");
+    }
+}
+
+$(document).ready(function () {
+    // Use jQuery to get the script and ensure it's loaded before initializing the table
+    $.getScript("{% static 'js/jquery.mark.min.js' %}", function () {
+        console.log('mark function:', $.fn.mark);
+        console.log('unmark function:', $.fn.unmark);
+        
+        // Initialize DataTable
+        var table = $('#sort').DataTable({
+            "dom": '<"top"i>rt<"bottom"lp><"clear">',
+            "pageLength": 100,
+            "lengthMenu": [50, 100, 200, 300, 400, 500],
+        });
+
+        $('#customSearchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+
+        table.on('draw', function () {
+            var searchTerm = $('#customSearchBox').val().trim();
+            $('#sort tbody').unmark().mark(searchTerm);
+        });
+
+        // Apply styles using jQuery for consistency and simplicity
+        // Update styles for form controls
+        $(".form-control, .form-control-sm").css({
+            "background-color": "#FFFFFF" // Set background to white
+        });
+
+        // Ensure placeholder is set for any form-control element if not specifically targeting
+        $(".form-control, .form-control-sm").attr("placeholder", "Search for any key word");
+
+        // Insert "Search:" text before the search box
+        if ($('#customSearchBox').prev('label.search-label').length === 0) {
+            $('<label class="search-label" for="customSearchBox">Search:</label>')
+			.css({"margin-bottom": "0",
+				"margin-right": "10px",
+				"font-size": "1em",
+				"font-weight": "bold",
+				"color": "#FFFFFF"})
+			.insertBefore('#customSearchBox');
+        }
+
+        // Ensure the search box and its label are in the same inline column
+        $('#customSearchBox').parent().css({
+            "display": "flex",
+            "align-items": "center",
+			"background-color": "#4b2e83",
+			"padding": "10px",
+			"border-radius": "5px"  // This ensures vertical alignment if needed
+        });
+
+        $('#exampleModalCenter').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus');
+        });
+
+        // Simplified clear search event handling
+        $('#clear-search').click(function (event) {
+            event.preventDefault();
+            $('#search-form').find('input[type="text"], select').val('').submit();
+        });
+    });
+});
+
+		</script>
 
 	</div>
 </div>
@@ -279,91 +357,5 @@
 		</div>
 	</div>
 </div>
-<script>
-$(document).ready(function() {
-	function loadMarkJs(callback) {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = "{% static 'js/jquery.mark.min.js' %}"; // Adjust the path as necessary
-        script.onload = function() {
-            if (typeof callback === "function") {
-                callback();
-            }
-        };
-        document.getElementsByTagName("head")[0].appendChild(script);
-    }
-
-    // Load mark.js and then initialize your DataTable and use mark.js functions
-    loadMarkJs(function() {
-        console.log('mark.js has been loaded successfully');
-        // Now you can safely use $.fn.mark and $.fn.unmark
-        console.log($.fn.mark);   // Should log the function
-        console.log($.fn.unmark); // Should log the function
-
-        // Initialize your DataTable here
-        var table = $('#sort').DataTable({
-            "dom": '<"top"i>rt<"bottom"lp><"clear">',
-            "pageLength": 100,
-            "lengthMenu": [50, 100, 200, 300, 400, 500],
-        });
-
-        $('#customSearchBox').on('keyup', function() {
-            var searchTerm = this.value;
-            table.search(searchTerm).draw();
-        });
-
-        table.on('draw', function() {
-            var searchTerm = $('#customSearchBox').val().trim();
-            // Ensure you unmark before marking to avoid duplicating marks
-            $('#sort tbody').unmark({
-                done: function(){
-                    $('#sort tbody').mark(searchTerm);
-                }
-            });
-        });
-
-		document.getElementsByClassName("form-control").style = "width:500px;background-color:#CBDCFF";
-		document.getElementsByClassName("form-control-sm").style = "width:500px;background-color:#CBDCFF";
-		document.getElementsByClassName("form-control").placeholder = "Search for any key word";
-		document.getElementsByClassName("form-control-sm").placeholder = "Search for any key word";
-		$('#exampleModalCenter').on('shown.bs.modal', function () {
-			$('#myInput').trigger('focus')
-		})
-		if (inputParams.has("authorEnglish2")) {
-			console.log("Are we here?");
-			document.getElementById('basicSearch').style.display = "block";
-			document.getElementById('AdvSearch').className = "btn btn-secondary";
-			document.getElementById('AdvSearch').innerHTML = "Search";
-		}
-		else {
-			document.getElementById('basicSearch').style.display = "none";
-			document.getElementById('AdvSearch').className = "btn btn-primary";
-			document.getElementById('AdvSearch').innerHTML = "Advanced Search";
-		}
-		document.getElementById('clear-search').addEventListener('click', function (event) {
-			event.preventDefault();
-			var form = document.getElementById('search-form');
-			Array.from(form.elements).forEach(function (input) {
-				if (input.type === 'text' || input.type === 'select-one') {
-					input.value = '';
-				}
-			});
-			form.submit();
-		});
-	});
-	function showDiv() {
-		if (document.getElementById('basicSearch').style.display == "none") {
-			document.getElementById('basicSearch').style.display = "block";
-			document.getElementById('AdvSearch').className = "btn btn-secondary";
-			document.getElementById('AdvSearch').innerHTML = "Back to Search";
-		}
-		else {
-			document.getElementById('basicSearch').style.display = "none";
-			document.getElementById('AdvSearch').className = "btn btn-primary";
-			document.getElementById('AdvSearch').innerHTML = "Advanced Search";
-		}
-	}
-});
-</script>
 
 {% endblock %}
