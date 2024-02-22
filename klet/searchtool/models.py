@@ -28,6 +28,8 @@ class Record(models.Model):
 	yearCreated = models.FloatField(null=True, blank=True, default=00.00)
 	authorEnglish2 = models.CharField(max_length=300, null=True, blank=True, default="")
 	uid2 = models.CharField(max_length=100, default="Not Registered yet")
+	subjects = models.TextField(blank=True, null=True)
+	summary = models.TextField(blank=True, null=True)
 
 
 
@@ -58,6 +60,8 @@ class AddRequest(models.Model):
 	authorEnglish2 = models.CharField(max_length=300, null=True, blank=True, default="")
 	uid2 = models.CharField(max_length=100, default="Not Registered yet")
 	other = models.CharField(max_length=300, null=True, blank=True, default="")
+	subjects = models.TextField(blank=True, null=True) 
+	summary = models.TextField(blank=True, null=True)
 
 class Users(models.Model):
 	userName = models.CharField(max_length=100, null=False, blank=False )
