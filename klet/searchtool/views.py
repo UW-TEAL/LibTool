@@ -5,6 +5,8 @@ from .filters import *
 import uuid
 import numpy
 from .forms import *
+from django.http import HttpResponse
+import openpyxl
 # Create your views here.
 
 def home(request):
@@ -136,3 +138,29 @@ def changeAnything(request):
 def adminLogin(request):
     context = {'message': 'Admin Portal in making'}
     return render(request, 'admin.html', context)
+
+def export_selected_to_excel(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_ids')
+        records = Record.objects.filter(id__in=selected_ids)
+        
+        # Create an Excel workbook and sheet
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.title = 'Selected Records'
+
+        # Add headers to the Excel sheet
+        headers = ['Translation Title', 'Korean Title', 'Author (Kor)', 'Author (Eng)', 'Translator', 'Source', 'Publisher', 'Year', 'Genre']
+        sheet.append(headers)
+
+        # Add data rows to the Excel sheet
+        for record in records:
+            row = [record.workTitle, record.workTitleKorean, record.authorKorean, record.authorEnglish, record.translator, record.sourceTitle, record.publisher, record.year, record.genre]
+            sheet.append(row)
+
+        # Set HTTP response with Excel file
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="selected_records.xlsx"'
+        workbook.save(response)
+
+        return response
