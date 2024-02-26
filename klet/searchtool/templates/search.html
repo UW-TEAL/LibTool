@@ -3,11 +3,12 @@
 
 {% block content %}
 <style>
-	/* @font-face 
-	{
-    font-family: myFirstFont;
-    src: url(ArianaVioleta-dz2K.ttf);
-	} */
+	body {
+		display: none;
+		opacity: 0;
+		transition: opacity 0.5s ease-out;
+	}
+
 	.btn-primary {
 		background-color: #4b2e83 !important;
 		margin-top: 10px;
@@ -16,6 +17,7 @@
 
 	.btn-secondary {
 		background-color: #85754d !important;
+		margin-top: 10px;
 	}
 
 	.pagination {
@@ -72,6 +74,11 @@
 		background-color: #85754d;
 		color: white;
 	}
+
+	#customSearchBox {
+		visibility: hidden;
+		/* Hide it initially */
+	}
 </style>
 
 <head>
@@ -88,7 +95,7 @@
 	<div class="row" id="basicSearch" style="display:none;">
 		<div class="col">
 			<div class="card card-body">
-				<form method="get" id="search-form">
+				<form method="get" id="search-form" action="{% url 'search' %}">
 					<div class="filter-container">
 						{% for field in myFilter.form %}
 						<div class="filter-field">
@@ -127,7 +134,9 @@
 				<table class="table responsive" id="sort" cellspacing="0" width="100%">
 					<thead>
 						<tr>
-							<th>Select</th>
+							<th>
+								<input type="checkbox" id="selectAllCheckbox" aria-label="Select All">
+							</th>
 							<th>Translation Title</th>
 							<th>Korean Title</th>
 							<th>Author (Kor)</th>
@@ -137,7 +146,7 @@
 							<th>Publisher</th>
 							<th>Year</th>
 							<th>Genre</th>
-							<th>WorldCat Search</th>
+							<th>Search</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -215,6 +224,12 @@
 										width="20" height="20" fill="currentColor" class="bi bi-link-45deg"
 										viewBox="0 0 20 20">
 								</a>
+								<a href="https://www.google.com/search?tbo=p&tbm=bks&q=intitle:{{ record.sourceTitle|urlencode }}"
+									target="_blank">
+									<img src="{% static 'searchtool/Google icon.svg' %}" alt="Google Books Icon"
+										width="18" height="18" fill="currentColor" class="bi bi-link-45deg"
+										viewBox="0 0 18 18">
+								</a>
 							</td>
 						</tr>
 						{% endfor %}
@@ -226,10 +241,6 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
 		<script src="{% static 'js/jquery.mark.min.js' %}"></script>
-		<script>
-			console.log('mark function:', $.fn.mark);
-			console.log('unmark function:', $.fn.unmark);
-		</script>
 		<script>
 			function showDiv() {
 				var basicSearch = $('#basicSearch');
@@ -247,14 +258,14 @@
 			$(document).ready(function () {
 				// Use jQuery to get the script and ensure it's loaded before initializing the table
 				$.getScript("{% static 'js/jquery.mark.min.js' %}", function () {
-					console.log('mark function:', $.fn.mark);
-					console.log('unmark function:', $.fn.unmark);
-
 					// Initialize DataTable
 					var table = $('#sort').DataTable({
 						"dom": '<"top"i>rt<"bottom"lp><"clear">',
 						"pageLength": 100,
 						"lengthMenu": [50, 100, 200, 300, 400, 500],
+						"columnDefs": [
+							{ "orderable": false, "targets": 0 } // Disables sorting on the first column
+						]
 					});
 
 					$('#customSearchBox').on('keyup', function () {
@@ -307,9 +318,16 @@
 						$('#search-form').find('input[type="text"], select').val('').submit();
 					});
 				});
+				$('#selectAllCheckbox').change(function () {
+					var isChecked = $(this).is(':checked');
+					$('.record-checkbox').prop('checked', isChecked);
+				});
 			});
 
 			document.addEventListener('DOMContentLoaded', function () {
+				document.body.style.display = 'block';
+				document.body.style.opacity = 1;
+				var searchForm = document.getElementById('search-form');
 				var csrfToken = '{{ csrf_token }}';
 				document.getElementById('exportSelected').addEventListener('click', function () {
 					var selectedIds = [];
@@ -335,8 +353,37 @@
 						alert('Please select at least one item.');
 					}
 				});
-			});
+				searchForm.addEventListener('submit', function (event) {
+					event.preventDefault(); // Prevent the form from submitting the traditional way
 
+					var formElements = searchForm.elements;
+					var searchParams = new URLSearchParams();
+
+					// Iterate through form elements
+					for (var i = 0; i < formElements.length; i++) {
+						var element = formElements[i];
+						var name = element.name;
+						var value = element.value;
+
+						// Add only non-empty values to the search parameters
+						if (value && name) {
+							searchParams.append(name, value);
+						}
+					}
+
+					// Get the form's action attribute
+					var formAction = searchForm.getAttribute('action') || '/searchtool/search/'; // Provide a default path if null
+
+					// Construct the new URL
+					var newActionUrl = formAction + "?" + searchParams.toString();
+
+					// Redirect to the new URL
+					window.location.href = newActionUrl;
+				});
+				window.addEventListener('load', function () {
+					document.getElementById('customSearchBox').style.visibility = 'visible';
+				});
+			});
 		</script>
 
 	</div>
