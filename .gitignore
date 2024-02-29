@@ -12,3 +12,5 @@ Pipfile.lock
 
 # Ignore poetry files
 poetry.lock
+
+klet/web scraping/.env
