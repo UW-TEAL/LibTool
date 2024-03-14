@@ -30,6 +30,9 @@ class Record(models.Model):
 	uid2 = models.CharField(max_length=100, default="Not Registered yet")
 	subjects = models.TextField(blank=True, null=True)
 	summary = models.TextField(blank=True, null=True)
+	InfoLink = models.CharField(max_length=100, null=True, blank=True, default="")
+	ISBN_10 = models.CharField(max_length=100, null=True, blank=True, default="")
+	ISBN_13 = models.CharField(max_length=100, null=True, blank=True, default="")
 
 
 
