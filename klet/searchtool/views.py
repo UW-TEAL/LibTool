@@ -27,15 +27,26 @@ def search(request):
     newNamesKr.sort()
     newNamesEng = [i for a,i in enumerate(newNamesEng) if i!=' ']
     newNamesKr = [i for a,i in enumerate(newNamesKr) if i!=' ']
-    myFilter = RecordFilter(request.GET, queryset = records)
+    requestParams = request.GET.copy()
+    # breakpoint()
+    authorEnglish2Filter = requestParams.get('authorEnglish2', '')
+    if authorEnglish2Filter:
+      authorKorean_arr= records.filter(
+        Q(authorEnglish__icontains=authorEnglish2Filter) | 
+        Q(authorEnglish2__icontains=authorEnglish2Filter)
+      ).values_list('authorKorean', flat=True).distinct()
+      records = records.filter(authorKorean__in=authorKorean_arr)
+      requestParams.pop('authorEnglish2', None)
 
-    
+    myFilter = RecordFilter(requestParams, queryset = records)
+
     filters = {}
     filter_criteria = request.GET
     for i in filter_criteria:
         filters[i] = filter_criteria[i]
     filters = {k: v for k, v in filters.items() if v}
     print(filters)
+
     records = myFilter.qs
     context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters}
     # print(type(myFilter.form))
