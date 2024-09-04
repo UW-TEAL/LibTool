@@ -265,13 +265,46 @@
 						]
 					});
 
+          $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var searchValue = $('#customSearchBox').val().trim().toLowerCase();
+            if (!searchValue) {
+                return true;
+            }
+
+            if (searchValue.includes("-")) {
+              var searchWords = [searchValue.replace("-", " "), searchValue];
+            } else {
+              var searchWords = [searchValue, searchValue.replace(" ", "-")];
+            }
+
+            var rowContainsAllWords = false;
+            for (var i = 0; i < data.length; i++) {
+              var rowData = data[i].toLowerCase().replace("-", " ")
+              var allWordsPresent = searchWords.some(function(word) {
+                return rowData.includes(word);
+              });
+              if (allWordsPresent) {
+                  rowContainsAllWords = true;
+                  break; 
+              }
+            }
+
+            return rowContainsAllWords;
+          });
+
 					$('#customSearchBox').on('keyup', function () {
-						table.search(this.value).draw();
+						table.draw();
 					});
 
 					table.on('draw', function () {
-						var searchTerm = $('#customSearchBox').val().trim();
-						$('#sort tbody').unmark().mark(searchTerm);
+						var searchValue = $('#customSearchBox').val().trim();
+            if (searchValue.includes("-")) {
+              var searchWords = [searchValue.replace("-", " "), searchValue];
+            } else {
+              var searchWords = [searchValue, searchValue.replace(" ", "-")];
+            }
+						$('#sort tbody').unmark().mark(searchWords, {"accuracy": "exactly"});
+
 					});
 
 					// Apply styles using jQuery for consistency and simplicity
