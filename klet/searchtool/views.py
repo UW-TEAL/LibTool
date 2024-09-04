@@ -7,6 +7,7 @@ import numpy
 from .forms import *
 from django.http import HttpResponse
 import openpyxl
+from django.db.models import Q
 # Create your views here.
 
 def home(request):
