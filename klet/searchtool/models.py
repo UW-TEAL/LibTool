@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum, F, FloatField
 # Create your models here.
+import uuid
 
 
 class Record(models.Model):
@@ -27,7 +28,7 @@ class Record(models.Model):
 	year = models.CharField(max_length=100,null=True, blank=True, default=" ")
 	yearCreated = models.FloatField(null=True, blank=True, default=00.00)
 	authorEnglish2 = models.CharField(max_length=300, null=True, blank=True, default="")
-	uid2 = models.CharField(max_length=100, default="Not Registered yet")
+	uid2 = models.CharField(max_length=100, default=uuid.uuid4)
 	subjects = models.TextField(blank=True, null=True)
 	summary = models.TextField(blank=True, null=True)
 	InfoLink = models.CharField(max_length=100, null=True, blank=True, default="")
