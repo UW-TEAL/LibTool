@@ -111,17 +111,6 @@
 					</button>
 				</form>
 			</div>
-			{% if Filters %}
-			<div>
-				<h4>Active Filters</h4>
-				{% for k in Filters %}
-				<button class="btn btn-primary">
-					{{k}}{{Filters.k}}
-				</button>
-				{% endfor %}
-			</div>
-			{% endif %}
-			<!-- <h3>{{Filters}}</h3> -->
 		</div>
 		<br>
 	</div>
@@ -281,7 +270,7 @@
             for (var i = 0; i < data.length; i++) {
               var rowData = data[i].toLowerCase().replace("-", " ")
               var allWordsPresent = searchWords.some(function(word) {
-                return rowData.includes(word);
+                return rowData.includes(word);  
               });
               if (allWordsPresent) {
                   rowContainsAllWords = true;
@@ -318,15 +307,27 @@
 
 					// Insert "Search:" text before the search box
 					if ($('#customSearchBox').prev('label.search-label').length === 0) {
-						$('<label class="search-label" for="customSearchBox">Search:</label>')
-							.css({
-								"margin-bottom": "0",
-								"margin-right": "10px",
-								"font-size": "1em",
-								"font-weight": "bold",
-								"color": "#FFFFFF"
-							})
-							.insertBefore('#customSearchBox');
+
+              {% if is_request_params_empty %}
+                $('<label class="search-label" for="customSearchBox">Search:</label>')
+                  .css({
+                    "margin-bottom": "0",
+                    "margin-right": "10px",
+                    "font-size": "1em",
+                    "font-weight": "bold",
+                    "color": "#FFFFFF",
+                  }).insertBefore('#customSearchBox');
+              {% else %}
+                $('<label class="search-label" for="customSearchBox">Search within Search:</label>')
+                  .css({
+                    "margin-bottom": "0",
+                    "margin-right": "10px",
+                    "font-size": "1em",
+                    "font-weight": "bold",
+                    "color": "#FFFFFF",
+                    "width": "12%"
+                  }).insertBefore('#customSearchBox');
+              {% endif %}
 					}
 
 					// Ensure the search box and its label are in the same inline column

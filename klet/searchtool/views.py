@@ -29,9 +29,9 @@ def search(request):
     newNamesEng = [i for a,i in enumerate(newNamesEng) if i!=' ']
     newNamesKr = [i for a,i in enumerate(newNamesKr) if i!=' ']
     requestParams = request.GET.copy()
-    # breakpoint()
     authorEnglish2Filter = requestParams.get('authorEnglish2', '')
     if authorEnglish2Filter:
+      authorEnglish2Filter = authorEnglish2Filter.strip()
       authorKorean_arr= records.filter(
         Q(authorEnglish__icontains=authorEnglish2Filter) | 
         Q(authorEnglish2__icontains=authorEnglish2Filter)
@@ -40,16 +40,16 @@ def search(request):
       requestParams.pop('authorEnglish2', None)
 
     myFilter = RecordFilter(requestParams, queryset = records)
-
     filters = {}
     filter_criteria = request.GET
     for i in filter_criteria:
         filters[i] = filter_criteria[i]
     filters = {k: v for k, v in filters.items() if v}
     print(filters)
-
     records = myFilter.qs
-    context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters}
+    if authorEnglish2Filter:
+      myFilter.form.data['authorEnglish2'] = authorEnglish2Filter
+    context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters, 'is_request_params_empty': not bool(request.GET)}
     # print(type(myFilter.form))
     return render(request,'search.html',context)
 
