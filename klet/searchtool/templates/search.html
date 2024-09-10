@@ -345,8 +345,8 @@
 					// Simplified clear search event handling
 					$('#clear-search').click(function (event) {
 						event.preventDefault();
-						$('#search-form').find('input[type="text"], select').val('');
-            $('#search-form').submit();
+						$('#search-form').find('input[type="text"], select').val('').submit();;
+            // $('#search-form').submit();
 					});
 				});
 				$('#selectAllCheckbox').change(function () {
