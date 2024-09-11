@@ -9,6 +9,7 @@ class ModelAdmin(ImportExportModelAdmin):
     resource_class = RecordResource
     list_display = ['workTitle', "workTitleKorean", 'authorKorean', 'authorEnglish', 'translator', 'sourceTitle', 'publisher', 'year', 'genre', 'subjects', 'summary', 'InfoLink', 'ISBN_10', 'ISBN_13']
     search_fields = ['authorKorean', 'authorEnglish', 'workTitle', 'genre', 'translator', 'sourceTitle', 'publisher', 'year', 'yearCreated', 'authorEnglish2', 'uid2','subjects', 'summary','ISBN_10', 'ISBN_13']
+    exclude = ('id', 'yearCreated', 'authorEnglish2', 'uid2', 'author')
 
     list_per_page = 20
 

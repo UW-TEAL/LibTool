@@ -4,6 +4,13 @@ from django.db.models import Sum, F, FloatField
 import uuid
 
 
+class AuthorEnglish(models.Model):
+	name = models.CharField(max_length=255)
+	first_name = models.CharField(max_length=255)
+	last_name = models.CharField(max_length=255)
+	def __str__(self):
+		return self.name
+
 class Record(models.Model):
 	GENRE = (('Fiction', 'Fiction'),
 			('Poetry', 'Poetry'),
@@ -34,8 +41,39 @@ class Record(models.Model):
 	InfoLink = models.CharField(max_length=100, null=True, blank=True, default="")
 	ISBN_10 = models.CharField(max_length=100, null=True, blank=True, default="")
 	ISBN_13 = models.CharField(max_length=100, null=True, blank=True, default="")
+	author = models.ForeignKey(AuthorEnglish, on_delete=models.SET_NULL, related_name='records', null=True)
 
 
+	def save(self, *args, **kwargs):
+		# Custom code to run before saving the instance
+		is_changed_author_english = True
+		if self.pk:
+			previous = Record.objects.get(pk=self.pk)
+			if previous and previous.authorEnglish == self.authorEnglish:
+				is_changed_author_english = False
+
+		if is_changed_author_english:
+			author_english = self.author
+			if not author_english:
+				author_english = AuthorEnglish.objects.create(name=self.authorEnglish)
+
+			author_english.name = self.authorEnglish
+			author_english.first_name = self.first_name_author_english(self.authorEnglish)
+			author_english.last_name = self.last_name_author_english(self.authorEnglish)
+			author_english.save()
+			self.author_id = author_english.id
+		# Call the parent class's save method
+		super().save(*args, **kwargs)
+
+	def first_name_author_english(self, full_name):
+		split_name = full_name.replace('[', '').replace(']', '').split(" ")
+		first_name = " ".join(split_name[1:])
+		return first_name
+
+	def last_name_author_english(self, full_name):
+		split_name = full_name.replace('[', '').replace(']', '').split(" ")
+		last_name = split_name[0]
+		return last_name
 
 class AddRequest(models.Model):
 	requestid = models.CharField(max_length=100, null=True, blank=True ,default="")

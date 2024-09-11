@@ -15,19 +15,23 @@ def home(request):
 
 def search(request):
     records = Record.objects.all().order_by('authorEnglish')
-    namesEng = []
     namesKr = []
     for i in records:
-        if i.authorEnglish and i.authorEnglish!= "nan":            
-            namesEng.append(i.authorEnglish)
         if i.authorKorean  and i.authorKorean!= "nan":
             namesKr.append(i.authorKorean)
-    newNamesEng = [*set(namesEng)]
     newNamesKr = [*set(namesKr)]
-    newNamesEng.sort()
     newNamesKr.sort()
-    newNamesEng = [i for a,i in enumerate(newNamesEng) if i!=' ']
     newNamesKr = [i for a,i in enumerate(newNamesKr) if i!=' ']
+
+    newNamesEng = (
+        AuthorEnglish.objects
+        .values_list('name', flat=True)   # Extract the 'name' field
+        .order_by('last_name')            # Order by 'last_name'
+        .distinct()                       # Remove duplicates
+        .filter(name__isnull=False)       # Filter out empty names
+        .filter(name__gt='')              # Filter out empty strings
+    )
+
     requestParams = request.GET.copy()
     authorEnglish2Filter = requestParams.get('authorEnglish2', '')
     if authorEnglish2Filter:
