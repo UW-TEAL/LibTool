@@ -3,9 +3,10 @@ from import_export.admin import ImportExportModelAdmin
 # Register your models here.
 from .models import *
 from .resources import RecordResource
+from django.contrib import admin
 
 
-class ModelAdmin(ImportExportModelAdmin):
+class RecordAdmin(ImportExportModelAdmin):
     resource_class = RecordResource
     list_display = ['workTitle', "workTitleKorean", 'authorKorean', 'authorEnglish', 'translator', 'sourceTitle', 'publisher', 'year', 'genre', 'subjects', 'summary', 'InfoLink', 'ISBN_10', 'ISBN_13']
     search_fields = ['authorKorean', 'authorEnglish', 'workTitle', 'genre', 'translator', 'sourceTitle', 'publisher', 'year', 'yearCreated', 'authorEnglish2', 'uid2','subjects', 'summary','ISBN_10', 'ISBN_13']
@@ -19,4 +20,17 @@ class ModelAdmin(ImportExportModelAdmin):
         # For example, to make 'authorEnglish' and 'workTitle' clickable:
         return ('authorKorean', 'authorEnglish', 'workTitle', 'genre', 'translator', 'sourceTitle', 'publisher', 'year', 'subjects', 'summary', 'InfoLink', 'ISBN_10', 'ISBN_13')
 
-admin.site.register(Record, ModelAdmin)
+
+class AuthorEnglishAdmin(admin.ModelAdmin):
+    model = AuthorEnglish
+    list_display = (
+        'id',
+        'name',
+        'first_name',
+        'last_name',
+    )
+    search_fields = ['name']
+    list_per_page = 50
+
+admin.site.register(Record, RecordAdmin)
+admin.site.register(AuthorEnglish, AuthorEnglishAdmin)

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import pandas as pd
+import re
 from .models import *
 from .filters import *
 import uuid
@@ -8,6 +9,8 @@ from .forms import *
 from django.http import HttpResponse
 import openpyxl
 from django.db.models import Q
+from itertools import groupby
+from operator import attrgetter
 # Create your views here.
 
 def home(request):
@@ -23,15 +26,25 @@ def search(request):
     newNamesKr.sort()
     newNamesKr = [i for a,i in enumerate(newNamesKr) if i!=' ']
 
-    newNamesEng = (
+    author_englishs = (
         AuthorEnglish.objects
-        .values_list('name', flat=True)   # Extract the 'name' field
         .order_by('last_name')            # Order by 'last_name'
         .distinct()                       # Remove duplicates
         .filter(name__isnull=False)       # Filter out empty names
         .filter(name__gt='')              # Filter out empty strings
     )
 
+    grouped = {k: list(v) for k, v in groupby(author_englishs, key=attrgetter('last_name'))}
+
+    newNamesEng = []
+    for last_name, group in grouped.items():
+        seen_names = set()
+
+        for person in group:
+            normalized = normalize_name(person.first_name)
+            if (normalized not in seen_names and person.name.split(" ")[0] == person.last_name):
+                seen_names.add(normalized)
+                newNamesEng.append(person.name)
     requestParams = request.GET.copy()
     authorEnglish2Filter = requestParams.get('authorEnglish2', '')
     if authorEnglish2Filter:
@@ -61,6 +74,9 @@ def generateAuthorLinks(names):
     for i in names:
         print(i)
     return 0
+
+def normalize_name(name):
+    return re.sub(r'[\s-]', '', name)
 
 def populateDatabase(request):
     df1 = pd.read_csv('/Users/hrithik/Desktop/PC/UofW/work/new/LibTool/klet/searchtool/data/Updates1_WithAlterNames.csv')
