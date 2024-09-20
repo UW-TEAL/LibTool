@@ -5,6 +5,7 @@ from .views import export_selected_to_excel
 urlpatterns = [
     path('',views.home),
     path('search/',views.search, name="search"),
+    path('datatable_records/',views.datatable_records, name="datatable_records"),
     path('populatedatabase/',views.populateDatabase),
     path('delete/',views.deleteDatabase),
     path('populateYear/',views.updateYear),

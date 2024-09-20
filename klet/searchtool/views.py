@@ -11,12 +11,15 @@ import openpyxl
 from django.db.models import Q
 from itertools import groupby
 from operator import attrgetter
+from django.http import JsonResponse
+from .datatable import SearchToolDataTable
 # Create your views here.
 
 def home(request):
     return render(request,'home.html')
 
 def search(request):
+
     records = Record.objects.all().order_by('authorEnglish')
     namesKr = []
     for i in records:
@@ -45,30 +48,30 @@ def search(request):
             if (normalized not in seen_names and person.name.split(" ")[0] == person.last_name):
                 seen_names.add(normalized)
                 newNamesEng.append(person.name)
-    requestParams = request.GET.copy()
-    authorEnglish2Filter = requestParams.get('authorEnglish2', '')
-    if authorEnglish2Filter:
-      authorEnglish2Filter = authorEnglish2Filter.strip()
-      authorKorean_arr= records.filter(
-        Q(authorEnglish__icontains=authorEnglish2Filter) | 
-        Q(authorEnglish2__icontains=authorEnglish2Filter)
-      ).values_list('authorKorean', flat=True).distinct()
-      records = records.filter(authorKorean__in=authorKorean_arr)
-      requestParams.pop('authorEnglish2', None)
 
-    myFilter = RecordFilter(requestParams, queryset = records)
+
+    myFilter = RecordFilter(request.GET, queryset = records)
     filters = {}
     filter_criteria = request.GET
     for i in filter_criteria:
         filters[i] = filter_criteria[i]
     filters = {k: v for k, v in filters.items() if v}
     print(filters)
-    records = myFilter.qs
-    if authorEnglish2Filter:
-      myFilter.form.data['authorEnglish2'] = authorEnglish2Filter
-    context = {'records':records,'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters, 'is_request_params_empty': not bool(request.GET)}
+    
+    context = {'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters, 'is_request_params_empty': not bool(request.GET)}
     # print(type(myFilter.form))
     return render(request,'search.html',context)
+
+
+def datatable_records(request):
+    total_records, data = SearchToolDataTable(request.GET).reponse_data()
+    return JsonResponse({
+        'draw': int(request.GET.get('draw', 0)),
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    })
+
 
 def generateAuthorLinks(names):
     for i in names:
