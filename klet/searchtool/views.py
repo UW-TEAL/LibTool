@@ -45,7 +45,7 @@ def search(request):
 
         for person in group:
             normalized = normalize_name(person.first_name)
-            if (normalized not in seen_names and person.name.split(" ")[0] == person.last_name):
+            if (normalized not in seen_names):
                 seen_names.add(normalized)
                 newNamesEng.append(person.name)
 
