@@ -114,7 +114,7 @@
 	<div class="row" id="basicSearch" style="display:none;">
 		<div class="col">
 			<div class="card card-body">
-				<form method="get" id="search-form" action="{% url 'search' %}">
+				<form method="get" id="search-form" action="javascript:void(0)">
 					<div class="filter-container">
 						{% for field in myFilter.form %}
 						<div class="filter-field">
@@ -422,12 +422,14 @@
 				window.addEventListener('load', function () {
 					document.getElementById('customSearchBox').style.visibility = 'visible';
 				});
-			  $(document).on('click', '.remove-filter', function() {
+			  $(document).on('click', '.remove-filter', function(e) {
+          e.preventDefault()
 			    let filter = $(this).data('filter');
 			    $(`input[name="${filter}"]`).val('');
 			    searchForm.dispatchEvent(new Event('submit'));
 			  });
-			  $(document).on('click', '.btn-clear-all-filters', function() {
+			  $(document).on('click', '.btn-clear-all-filters', function(e) {
+          e.preventDefault()
 			  	$('#search-form').find('input[type="text"], select').val('')
 			    searchForm.dispatchEvent(new Event('submit'));
 			  });
