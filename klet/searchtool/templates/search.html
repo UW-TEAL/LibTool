@@ -45,9 +45,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		padding: 10px;
-		border: 1px solid #ccc;
 		/* Optional: for container border */
-		border-radius: 5px;
 		/* Optional: for rounded corners */
 	}
 
@@ -56,7 +54,7 @@
 		/* Adjust this to control the width */
 		box-sizing: border-box;
 		padding: 5px;
-		/* Adjust the spacing between fields */
+		 Adjust the spacing between fields 
 	}
 
 	.filter-field input,
@@ -98,394 +96,405 @@
     border-radius: 10px !important;
     margin-bottom: 5px !important;
 	}
+/*  #requestFormModal{
+    opacity: 1
+  }*/
 </style>
 
-<head>
-	<meta charset="UTF-8">
-	<!-- <link rel="stylesheet" href='/searchtool/templates/style/customstyle.css'> -->
-	<link rel='stylesheet'
-		href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
-	<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,500" rel="stylesheet" />
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-</head>
-<div class="col-lg-10" style="height: max-content;">
-	<div class="row" id="basicSearch" style="display:none;">
-		<div class="col">
-			<div class="card card-body">
-				<form method="get" id="search-form" action="javascript:void(0)">
-					<div class="filter-container">
-						{% for field in myFilter.form %}
-						<div class="filter-field">
-							{{ field.label_tag }} {{ field }}
-						</div>
-						{% endfor %}
-					</div>
-					<button class="btn btn-primary" type="submit">
-						Search
-					</button>
-					<button id="clear-search" class="btn clear-search-btn" type="button">
-						Clear Search
-					</button>
-				</form>
-			</div>
-		</div>
-		<br>
-	</div>
-	<div class="row">
-		<div class="col-md">
-			<div class="card card-body">
-				<div id="customSearchContainer" class="mb-3">
-					<input type="text" id="customSearchBox" placeholder="Search..." class="form-control">
-				</div>
-				<div id="filterLabels"></div>
 
-				<button id='reload-ajax' class='d-none'> Reload</button>
-				<table class="table responsive" id="sort" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<th>
-								<input type="checkbox" id="selectAllCheckbox" aria-label="Select All">
-							</th>
-							<th>Translation Title</th>
-							<th>Korean Title</th>
-							<th>Author (Kor)</th>
-							<th>Author (Eng)</th>
-							<th>Translator</th>
-							<th>Source</th>
-							<th>Publisher</th>
-							<th>Year</th>
-							<th>Genre</th>
-							<th>Search</th>
-						</tr>
-					</thead>
-					<tbody>
 
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
-		<script src="{% static 'js/jquery.mark.min.js' %}"></script>
-		<script>
-			function showDiv() {
-				var basicSearch = $('#basicSearch');
-				var advSearchBtn = $('#AdvSearch');
+<div class='row'>
+  <div class="col-lg-10" style="height: max-content;">
+    <div class="row" id="basicSearch" style="display:none;">
+      <div class="col">
+        <div class="card card-body">
 
-				if (basicSearch.css('display') === "none") {
-					basicSearch.show();
-					advSearchBtn.addClass('btn-secondary').removeClass('btn-primary').text("Back to Search");
-				} else {
-					basicSearch.hide();
-					advSearchBtn.addClass('btn-primary').removeClass('btn-secondary').text("Advanced Search");
-				}
-			}
+        </div>
+      </div>
+      <br>
+    </div>
+    <div class="row">
+      <div class="col-md">
+        <div class="card card-body">
+          <!-- Modal -->
+          <div class="modal fade bd-example-modal-lg" id="advancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="advancedSearchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="advancedSearchModalLabel">Advanced Search</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="get" id="search-form" action="javascript:void(0)">
+                    <div class="filter-container">
+                      <div class="filter-field" style="flex: 1 1 100%;">
+                        <label for="id_keyword">Keyword:</label> <input type="text" name="keyword" class="form-group" id="id_keyword">
+                      </div>
+                      {% for field in myFilter.form %}
+                      <div class="filter-field">
+                        {{ field.label_tag }} {{ field }}
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                  </form>
+                </div>
 
-			$(document).ready(function () {
-				// Use jQuery to get the script and ensure it's loaded before initializing the table
-				$.getScript("{% static 'js/jquery.mark.min.js' %}", function () {
-					// Initialize DataTable
-					var table = $('#sort').DataTable({
-		        "processing": true,
-		        "serverSide": true,						
-						"dom": '<"top"i>rt<"bottom"lp><"clear">',
-						"pageLength": 100,
-						"lengthMenu": [50, 100, 200, 300, 400, 500],
-						"ajax": {
-							"url": "{% url 'datatable_records' %}",
-							"type": "GET",
-							"data": function(d) {
-								d.keyword = $('#customSearchBox').val();
-								d.authorEnglish2 = $(".filter-label.authorEnglish2").data("filfer-value")
-								d.authorKorean = $(".filter-label.authorKorean").data("filfer-value")
-								d.workTitle = $(".filter-label.workTitle").data("filfer-value")
-								d.workTitleKorean = $(".filter-label.workTitleKorean").data("filfer-value")
-								d.translator = $(".filter-label.translator").data("filfer-value")
-								d.start_date = $(".filter-label.start_date").data("filfer-value")
-								d.end_date = $(".filter-label.end_date").data("filfer-value")
-								d.year = $(".filter-label.year").data("filfer-value")
-								d.sourceTitle = $(".filter-label.sourceTitle").data("filfer-value")
-								d.genre = $(".filter-label.genre").data("filfer-value")
-								d.publisher = $(".filter-label.publisher").data("filfer-value")
-								return d
-							}
-						},
-						"columns": [
-						  {data: 'dt_checkbox'},
-						  {data: 'workTitle'},
-						  {data: 'workTitleKorean'},
-						  {data: 'authorKorean'},
-						  {data: 'authorEnglish'},
-						  {data: 'translator'},
-						  {data: 'sourceTitle'},
-						  {data: 'publisher'},
-						  {data: 'year'},
-						  {data: 'genre'},
-						  {data: 'dt_action_search'},
-						],
-						"columnDefs": [
-							{ "orderable": false, "targets": 0 }, // Disables sorting on the first column
-							{ "orderable": false, "targets": 10 } // Disables sorting on the last column
-						],
+              </div>
+            </div>
+          </div>        
+          <div id="customSearchContainer" class="mb-3">
+            <form method="get" id="apply-search-form" action="javascript:void(0)">
+              <input type="text" id="customSearchBox" placeholder="Search..." class="form-control">
+            </form>
+          </div>
+          <div id="filterLabels"></div>
+          <table class="table responsive" id="sort" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" id="selectAllCheckbox" aria-label="Select All">
+                </th>
+                <th>Translation Title</th>
+                <th>Korean Title</th>
+                <th>Author (Kor)</th>
+                <th>Author (Eng)</th>
+                <th>Translator</th>
+                <th>Source</th>
+                <th>Publisher</th>
+                <th>Year</th>
+                <th>Genre</th>
+                <th>Search</th>
+              </tr>
+            </thead>
+            <tbody>
 
-					});
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-          // $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-          // 	debugger;
-          //   var searchValue = $('#customSearchBox').val().trim().toLowerCase();
-          //   if (!searchValue) {
-          //       return true;
-          //   }
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
+      <script src="{% static 'js/jquery.mark.min.js' %}"></script>
+      <script>
+        function showDiv() {
+          $("#advancedSearchModal").modal("show")
+        }
 
-          //   if (searchValue.includes("-")) {
-          //     var searchWords = [searchValue.replace("-", " "), searchValue];
-          //   } else {
-          //     var searchWords = [searchValue, searchValue.replace(" ", "-")];
-          //   }
+        $(document).ready(function () {
+          window.searchParams = []
+          // Use jQuery to get the script and ensure it's loaded before initializing the table
+          $.getScript("{% static 'js/jquery.mark.min.js' %}", function () {
+            // Initialize DataTable
+            var table = $('#sort').DataTable({
+              "processing": true,
+              "serverSide": true,           
+              "dom": '<"top"i>rt<"bottom"lp><"clear">',
+              "pageLength": 100,
+              "lengthMenu": [50, 100, 200, 300, 400, 500],
+              "ajax": {
+                "url": "{% url 'datatable_records' %}",
+                "type": "GET",
+                "data": function(d) {
+                  d.keyword =  $("#search-form input[name='keyword']").val();
+                  d.authorEnglish2 = $("#search-form input[name='authorEnglish2']").val();
+                  d.authorKorean = $("#search-form input[name='authorKorean']").val();
+                  d.workTitle = $("#search-form input[name='workTitle']").val();
+                  d.workTitleKorean = $("#search-form input[name='workTitleKorean']").val();
+                  d.translator = $("#search-form input[name='translator']").val();
+                  d.start_date = $("#search-form input[name='start_date']").val();
+                  d.end_date = $("#search-form input[name='end_date']").val();
+                  d.year = $("#search-form input[name='year']").val();
+                  d.sourceTitle = $("#search-form input[name='sourceTitle']").val();
+                  d.genre = $("#search-form input[name='genre']").val();
+                  d.publisher = $("#search-form input[name='publisher']").val();
+                  return d
+                }
+              },
+              "columns": [
+                {data: 'dt_checkbox'},
+                {data: 'workTitle'},
+                {data: 'workTitleKorean'},
+                {data: 'authorKorean'},
+                {data: 'authorEnglish'},
+                {data: 'translator'},
+                {data: 'sourceTitle'},
+                {data: 'publisher'},
+                {data: 'year'},
+                {data: 'genre'},
+                {data: 'dt_action_search'},
+              ],
+              "columnDefs": [
+                { "orderable": false, "targets": 0 }, // Disables sorting on the first column
+                { "orderable": false, "targets": 10 } // Disables sorting on the last column
+              ],
+              language: {
+                  processing: '<div class="custom-loader"></div>' // Add a custom loader here
+              }
 
-          //   var rowContainsAllWords = false;
-          //   for (var i = 0; i < data.length; i++) {
-          //     var rowData = data[i].toLowerCase().replace("-", " ")
-          //     var allWordsPresent = searchWords.some(function(word) {
-          //       return rowData.includes(word);  
-          //     });
-          //     if (allWordsPresent) {
-          //         rowContainsAllWords = true;
-          //         break; 
-          //     }
-          //   }
+            });
 
-          //   return rowContainsAllWords;
-          // });
+            $("#apply-search-form").on("submit", function(e){
+              e.preventDefault();
+              var searchValue = $("#customSearchBox").val()
+              var keywordMatch = searchValue.match(/^(.+?)(?: AND|$)/);
+              var keyword = keywordMatch ? keywordMatch[1] : '';
+              $("#search-form").find("input,select").each(function(index, element) {
+                var elementName = $(element).attr('name');
+                var regexPattern = new RegExp(elementName + ":\\(([^)]+)\\)");
+                var elementMatch = searchValue.match(regexPattern);
+                var value = elementMatch ? elementMatch[1] : '';
+                $(element).val(value);
+              });
+              $('#search-form #id_keyword').val(keyword);
+              table.ajax.reload();
+            })
+            $(".index-author-link").on('click', function(e){
+              e.preventDefault();
+              let indexBy = $(this).data('index-by')
+              $('#search-form').find('input[type="text"], select').val('');
+              $(`input[name='${indexBy}']`).val($(this).text());
+              document.getElementById('search-form').dispatchEvent(new Event('submit'));
+            });
 
-					$('#customSearchBox').on('keyup', function () {
-						// table.draw();
-						table.ajax.reload();
-					});
+            table.on('draw', function () {
+              var filledElements = $('#search-form').find('input, select').filter(function() {
+                return $(this).val().trim() !== '';  // Filter elements with non-empty values
+              });
+              if(filledElements.length > 0) {
+                var fullTextArrs = filledElements.map(function(_, element) {
+                  let searchValue = $(element).val().trim()
+                  if (searchValue.includes("-")) {
+                    var searchWords = [searchValue.replace("-", " "), searchValue];
+                  } else {
+                    var searchWords = [searchValue, searchValue.replace(" ", "-")];
+                  }
+                  return searchWords;
+                });
+                $('#sort tbody').unmark().mark(fullTextArrs.get(), {"accuracy": "exactly"});
+              }
 
-					$("#reload-ajax").on('click', function(){
-						table.ajax.reload();
 
-					});
+            });
 
-					$(".index-author-link").on('click', function(e){
-						e.preventDefault();
-						let indexBy = $(this).data('index-by')
-						$('#search-form').find('input[type="text"], select').val('');
-						$(`input[name='${indexBy}']`).val($(this).text());
-            document.getElementById('search-form').dispatchEvent(new Event('submit'));
-					});
+            // Apply styles using jQuery for consistency and simplicity
+            // Update styles for form controls
+            $(".form-control, .form-control-sm").css({
+              "background-color": "#FFFFFF" // Set background to white
+            });
 
-					table.on('draw', function () {
-						var searchValue = $('#customSearchBox').val().trim();
-            if (searchValue.includes("-")) {
-              var searchWords = [searchValue.replace("-", " "), searchValue];
-            } else {
-              var searchWords = [searchValue, searchValue.replace(" ", "-")];
+            // Ensure placeholder is set for any form-control element if not specifically targeting
+            $(".form-control, .form-control-sm").attr("placeholder", "Search for any key word");
+
+            // Insert "Search:" text before the search box
+            if ($('#customSearchBox').prev('label.search-label').length === 0) {
+
+                {% if is_request_params_empty %}
+                  $('<label class="search-label" for="customSearchBox">Search:</label>')
+                    .css({
+                      "margin-bottom": "0",
+                      "margin-right": "10px",
+                      "font-size": "1em",
+                      "font-weight": "bold",
+                      "color": "#FFFFFF",
+                    }).insertBefore('#customSearchBox');
+                {% else %}
+                  $('<label class="search-label" for="customSearchBox">Search within Search:</label>')
+                    .css({
+                      "margin-bottom": "0",
+                      "margin-right": "10px",
+                      "font-size": "1em",
+                      "font-weight": "bold",
+                      "color": "#FFFFFF",
+                      "width": "12%"
+                    }).insertBefore('#customSearchBox');
+                {% endif %}
             }
-						$('#sort tbody').unmark().mark(searchWords, {"accuracy": "exactly"});
 
-					});
+            // Ensure the search box and its label are in the same inline column
+            $('#customSearchBox').parent().css({
+              "display": "flex",
+              "align-items": "center",
+              "background-color": "#4b2e83",
+              "padding": "10px",
+              "border-radius": "5px"  // This ensures vertical alignment if needed
+            });
 
-					// Apply styles using jQuery for consistency and simplicity
-					// Update styles for form controls
-					$(".form-control, .form-control-sm").css({
-						"background-color": "#FFFFFF" // Set background to white
-					});
+            $('#requestFormModal').on('shown.bs.modal', function () {
+              $('#myInput').trigger('focus');
+            });
 
-					// Ensure placeholder is set for any form-control element if not specifically targeting
-					$(".form-control, .form-control-sm").attr("placeholder", "Search for any key word");
+            // Simplified clear search event handling
+            $('#clear-search').click(function (event) {
+              event.preventDefault();
+              $('#search-form').find('input[type="text"], select').val('');
+              document.getElementById('search-form').dispatchEvent(new Event('submit'));
+            });
+          });
+          $('#selectAllCheckbox').change(function () {
+            var isChecked = $(this).is(':checked');
+            $('.record-checkbox').prop('checked', isChecked);
+          });
+        });
 
-					// Insert "Search:" text before the search box
-					if ($('#customSearchBox').prev('label.search-label').length === 0) {
+        document.addEventListener('DOMContentLoaded', function () {
+          document.body.style.display = 'block';
+          document.body.style.opacity = 1;
+          var searchForm = document.getElementById('search-form');
+          var csrfToken = '{{ csrf_token }}';
+          document.getElementById('exportSelected').addEventListener('click', function () {
+            var selectedIds = [];
+            document.querySelectorAll('.record-checkbox:checked').forEach(function (checkbox) {
+              selectedIds.push(checkbox.value);
+            });
 
-              {% if is_request_params_empty %}
-                $('<label class="search-label" for="customSearchBox">Search:</label>')
-                  .css({
-                    "margin-bottom": "0",
-                    "margin-right": "10px",
-                    "font-size": "1em",
-                    "font-weight": "bold",
-                    "color": "#FFFFFF",
-                  }).insertBefore('#customSearchBox');
-              {% else %}
-                $('<label class="search-label" for="customSearchBox">Search within Search:</label>')
-                  .css({
-                    "margin-bottom": "0",
-                    "margin-right": "10px",
-                    "font-size": "1em",
-                    "font-weight": "bold",
-                    "color": "#FFFFFF",
-                    "width": "12%"
-                  }).insertBefore('#customSearchBox');
-              {% endif %}
-					}
+            if (selectedIds.length > 0) {
+              var form = document.createElement('form');
+              form.method = 'POST';
+              form.action = '{% url "export_selected_to_excel" %}';
+              form.innerHTML = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
+              selectedIds.forEach(function (id) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_ids';
+                input.value = id;
+                form.appendChild(input);
+              });
+              document.body.appendChild(form);
+              form.submit();
+            } else {
+              alert('Please select at least one item.');
+            }
+          });
+          searchForm.addEventListener('submit', function (event) {
+            window.searchParams = []
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+            $('#filterLabels').html("");
+            var formElements = searchForm.elements;
 
-					// Ensure the search box and its label are in the same inline column
-					$('#customSearchBox').parent().css({
-						"display": "flex",
-						"align-items": "center",
-						"background-color": "#4b2e83",
-						"padding": "10px",
-						"border-radius": "5px"  // This ensures vertical alignment if needed
-					});
+            // Iterate through form elements
+            for (var i = 0; i < formElements.length; i++) {
+              var element = formElements[i];
+              var name = element.name;
+              var value = element.value;
 
-					$('#exampleModalCenter').on('shown.bs.modal', function () {
-						$('#myInput').trigger('focus');
-					});
+              // Add only non-empty values to the search parameters
+              if (value && name) {
+                window.searchParams.push({ id: element.id,name: name, value: value, label: $("#search-form label[for='" + element.id + "']").text() })
+              }
+            }
+            if (window.searchParams.length > 0) {
+              var fullTextArrs = window.searchParams.map(function(v) {
+                if (v.name === 'keyword') {
+                  return v.value;
+                } else {
+                  return v.name + ":" + "(" + v.value + ")";
+                }
+              });
 
-					// Simplified clear search event handling
-					$('#clear-search').click(function (event) {
-						event.preventDefault();
-						$('#search-form').find('input[type="text"], select').val('');
-            document.getElementById('search-form').dispatchEvent(new Event('submit'));
-					});
-				});
-				$('#selectAllCheckbox').change(function () {
-					var isChecked = $(this).is(':checked');
-					$('.record-checkbox').prop('checked', isChecked);
-				});
-			});
+              fullTextArrs = fullTextArrs.join(" AND ");
+              $("#customSearchBox").val(fullTextArrs)
+              listFilters = []
+              window.searchParams.forEach(function(filter) {
+                let labelHtml = `
 
-			document.addEventListener('DOMContentLoaded', function () {
-				document.body.style.display = 'block';
-				document.body.style.opacity = 1;
-				var searchForm = document.getElementById('search-form');
-				var csrfToken = '{{ csrf_token }}';
-				document.getElementById('exportSelected').addEventListener('click', function () {
-					var selectedIds = [];
-					document.querySelectorAll('.record-checkbox:checked').forEach(function (checkbox) {
-						selectedIds.push(checkbox.value);
-					});
+                  <span class="badge filter-label ${filter.name}" data-filfer-value="${filter.value}">
+                    ${filter.label} ${filter.value} <span class="remove-filter" data-filter="${filter.name}">&times;</span>
+                  </span>
+                `;
+                listFilters.push(labelHtml)
+              });
+              let clearAllFilters = `
+                <button type="button" class="btn btn-secondary btn-sm btn-clear-all-filters">Clear all Filters</button>
+              `
+              listFilters.push(clearAllFilters)
+              let filtersHtml = listFilters.join('');
 
-					if (selectedIds.length > 0) {
-						var form = document.createElement('form');
-						form.method = 'POST';
-						form.action = '{% url "export_selected_to_excel" %}';
-						form.innerHTML = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
-						selectedIds.forEach(function (id) {
-							var input = document.createElement('input');
-							input.type = 'hidden';
-							input.name = 'selected_ids';
-							input.value = id;
-							form.appendChild(input);
-						});
-						document.body.appendChild(form);
-						form.submit();
-					} else {
-						alert('Please select at least one item.');
-					}
-				});
-				searchForm.addEventListener('submit', function (event) {
-					event.preventDefault(); // Prevent the form from submitting the traditional way
-					$('#filterLabels').html("");
-					var formElements = searchForm.elements;
-					var searchParams = [];
+              $('#filterLabels').append(filtersHtml);
+            }
+            $("#advancedSearchModal").modal("hide");
+            $("#apply-search-form").trigger("submit");
 
-					// Iterate through form elements
-					for (var i = 0; i < formElements.length; i++) {
-						var element = formElements[i];
-						var name = element.name;
-						var value = element.value;
-
-						// Add only non-empty values to the search parameters
-						if (value && name) {
-							searchParams.push({ name: name, value: value, label: $("label[for='" + element.id + "']").text() })
-						}
-					}
-					if (searchParams.length > 0) {
-						listFilters = []
-				    searchParams.forEach(function(filter) {
-				      let labelHtml = `
-
-				        <span class="badge filter-label ${filter.name}" data-filfer-value="${filter.value}">
-				          ${filter.label} ${filter.value} <span class="remove-filter" data-filter="${filter.name}">&times;</span>
-				        </span>
-				      `;
-				      listFilters.push(labelHtml)
-				    });
-				    let clearAllFilters = `
-				    	<button type="button" class="btn btn-secondary btn-sm btn-clear-all-filters">Clear all Filters</button>
-				    `
-				    listFilters.push(clearAllFilters)
-				    let filtersHtml = listFilters.join('');
-
-						$('#filterLabels').append(filtersHtml);
-					}
-
-					$("#reload-ajax").trigger("click");
-
-				});
-				window.addEventListener('load', function () {
-					document.getElementById('customSearchBox').style.visibility = 'visible';
-				});
-			  $(document).on('click', '.remove-filter', function(e) {
-          e.preventDefault()
-			    let filter = $(this).data('filter');
-			    $(`input[name="${filter}"]`).val('');
-			    searchForm.dispatchEvent(new Event('submit'));
-			  });
-			  $(document).on('click', '.btn-clear-all-filters', function(e) {
-          e.preventDefault()
-			  	$('#search-form').find('input[type="text"], select').val('')
-			    searchForm.dispatchEvent(new Event('submit'));
-			  });
-			});
+          });
+          window.addEventListener('load', function () {
+            document.getElementById('customSearchBox').style.visibility = 'visible';
+          });
+          // $(document).on('click', '.remove-filter', function(e) {
+          //   e.preventDefault()
+          //   let filter = $(this).data('filter');
+          //   $(`input[name="${filter}"]`).val('');
+          //   searchForm.dispatchEvent(new Event('submit'));
+          // });
+          // $(document).on('click', '.btn-clear-all-filters', function(e) {
+          //   e.preventDefault()
+          //   $('#search-form').find('input[type="text"], select').val('')
+          //   searchForm.dispatchEvent(new Event('submit'));
+          // });
+        });
 
 
-		</script>
+      </script>
 
-	</div>
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <div class="row">
+      
+      <div class="col">
+        <button type="button" id="AdvSearch" class="btn btn-primary w-100 mb-3" onclick="showDiv()">Advanced Search</button>
+        <h4>Authors Korean</h4>
+        <div class="card card-body overflow-auto p-1 mb-3" style="height: 250px;">
+          <ul>
+            {% for krName in NamesKr %}
+            <a class="row index-author-link" data-index-by="authorKorean">{{krName}}</a>
+            {% endfor %}
+          </ul>
+        </div>
+        <h4>Authors English</h4>
+        <div class="card card-body overflow-auto p-1 mb-3" style="height: 250px; margin-bottom: 15px;">
+          <ul>
+            {% for engName in NamesEng %}
+            <a class="row index-author-link" data-index-by="authorEnglish2">{{engName}}</a>
+            {% endfor %}
+          </ul>
+        </div>
+        <button id="exportSelected" class="btn btn-primary w-100 mb-3">Export Selected</button>
+        <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#requestFormModal">
+          New Record
+        </button>
+      </div>
+
+      <div class="modal fade" id="requestFormModal" tabindex="-1" role="dialog"
+        aria-labelledby="requestFormModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">New record request form</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <h2>Submit a New Add Request</h2>
+              <form method="post">
+                  {% csrf_token %}
+                  {{ requestForm.as_p }}  
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
 </div>
-<div class="col-lg-2">
-	<div class="row">
-		<button type="button" id="AdvSearch" class="btn btn-primary" onclick="showDiv()">Advanced Search</button>
-		<div class="col">
-			<h4>Authors Korean</h4>
-			<div class="card card-body overflow-auto" style="height: 250px;">
-				<ul>
-					{% for krName in NamesKr %}
-					<a class="row index-author-link" data-index-by="authorKorean">{{krName}}</a>
-					{% endfor %}
-				</ul>
-			</div>
-			<h4>Authors English</h4>
-			<div class="card card-body overflow-auto" style="height: 250px; margin-bottom: 15px;">
-				<ul>
-					{% for engName in NamesEng %}
-					<a class="row index-author-link" data-index-by="authorEnglish2">{{engName}}</a>
-					{% endfor %}
-				</ul>
-			</div>
-		</div>
-		<button id="exportSelected" class="btn btn-primary">Export Selected</button>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-			New Record
-		</button>
-		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-			aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLongTitle">New record request form</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						Form to fill and request the new record will appear here soon!!
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Submit</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
 
 {% endblock %}

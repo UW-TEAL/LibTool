@@ -13,6 +13,7 @@ from itertools import groupby
 from operator import attrgetter
 from django.http import JsonResponse
 from .datatable import SearchToolDataTable
+from .forms import *
 # Create your views here.
 
 def home(request):
@@ -57,9 +58,10 @@ def search(request):
         filters[i] = filter_criteria[i]
     filters = {k: v for k, v in filters.items() if v}
     print(filters)
+
+    requestForm = NewRecordForm()
     
-    context = {'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters, 'is_request_params_empty': not bool(request.GET)}
-    # print(type(myFilter.form))
+    context = {'myFilter':myFilter, 'NamesEng':newNamesEng,'NamesKr':newNamesKr, 'Filters':filters, 'is_request_params_empty': not bool(request.GET), 'requestForm': requestForm}
     return render(request,'search.html',context)
 
 
