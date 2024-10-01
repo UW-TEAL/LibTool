@@ -188,8 +188,57 @@
           $("#advancedSearchModal").modal("show")
         }
 
+        function reLoadFilter() {
+          $('#filterLabels').html("");
+          searchParams = []
+          var filledElements = $('#search-form').find('input, select').filter(function() {
+            return $(this).val().trim() !== ''; 
+          });
+          if(filledElements.length > 0) {
+            filledElements.map(function(_, element) {
+              var name = element.name;
+              var value = element.value;
+
+              // Add only non-empty values to the search parameters
+              if (value && name) {
+                searchParams.push({ id: element.id,name: name, value: value, label: $("#search-form label[for='" + element.id + "']").text() })
+              }
+            });
+          }
+          if (searchParams.length > 0) {
+            var fullTextArrs = searchParams.map(function(v) {
+              if (v.name === 'keyword') {
+                return v.value;
+              } else {
+                return v.name + ":" + "(" + v.value + ")";
+              }
+            });
+
+            fullTextArrs = fullTextArrs.join(" AND ");
+            $("#customSearchBox").val(fullTextArrs)
+            listFilters = []
+            searchParams.forEach(function(filter) {
+              let labelHtml = `
+
+                <span class="badge filter-label ${filter.name}" data-filfer-value="${filter.value}">
+                  ${filter.label} ${filter.value} <span class="remove-filter" data-filter="${filter.name}">&times;</span>
+                </span>
+              `;
+              listFilters.push(labelHtml)
+            });
+            let clearAllFilters = `
+              <button type="button" class="btn btn-secondary btn-sm btn-clear-all-filters">Clear all Filters</button>
+            `
+            listFilters.push(clearAllFilters)
+            let filtersHtml = listFilters.join('');
+
+            $('#filterLabels').append(filtersHtml);
+          } else {
+            $("#customSearchBox").val("")
+          }
+        }
+
         $(document).ready(function () {
-          window.searchParams = []
           // Use jQuery to get the script and ensure it's loaded before initializing the table
           $.getScript("{% static 'js/jquery.mark.min.js' %}", function () {
             // Initialize DataTable
@@ -244,16 +293,26 @@
             $("#apply-search-form").on("submit", function(e){
               e.preventDefault();
               var searchValue = $("#customSearchBox").val()
-              var keywordMatch = searchValue.match(/^(.+?)(?: AND|$)/);
-              var keyword = keywordMatch ? keywordMatch[1] : '';
+
               $("#search-form").find("input,select").each(function(index, element) {
                 var elementName = $(element).attr('name');
                 var regexPattern = new RegExp(elementName + ":\\(([^)]+)\\)");
                 var elementMatch = searchValue.match(regexPattern);
-                var value = elementMatch ? elementMatch[1] : '';
+                if(elementMatch){
+                  var value = elementMatch[1]
+                  var regexReplace = new RegExp("(AND\\s+)?(" + elementName + ":\\(([^)]+)\\))");
+                  if (regexReplace){
+                    searchValue = searchValue.replace(regexReplace, '').trim();
+                  }
+                } else {
+                  var value = ''
+                }
                 $(element).val(value);
               });
+              var keywordMatch = searchValue.match(/^(.+?)(?: AND|$)/);
+              var keyword = keywordMatch ? keywordMatch[1] : '';
               $('#search-form #id_keyword').val(keyword);
+              reLoadFilter()
               table.ajax.reload();
             })
             $(".index-author-link").on('click', function(e){
@@ -374,51 +433,8 @@
             }
           });
           searchForm.addEventListener('submit', function (event) {
-            window.searchParams = []
             event.preventDefault(); // Prevent the form from submitting the traditional way
-            $('#filterLabels').html("");
-            var formElements = searchForm.elements;
-
-            // Iterate through form elements
-            for (var i = 0; i < formElements.length; i++) {
-              var element = formElements[i];
-              var name = element.name;
-              var value = element.value;
-
-              // Add only non-empty values to the search parameters
-              if (value && name) {
-                window.searchParams.push({ id: element.id,name: name, value: value, label: $("#search-form label[for='" + element.id + "']").text() })
-              }
-            }
-            if (window.searchParams.length > 0) {
-              var fullTextArrs = window.searchParams.map(function(v) {
-                if (v.name === 'keyword') {
-                  return v.value;
-                } else {
-                  return v.name + ":" + "(" + v.value + ")";
-                }
-              });
-
-              fullTextArrs = fullTextArrs.join(" AND ");
-              $("#customSearchBox").val(fullTextArrs)
-              listFilters = []
-              window.searchParams.forEach(function(filter) {
-                let labelHtml = `
-
-                  <span class="badge filter-label ${filter.name}" data-filfer-value="${filter.value}">
-                    ${filter.label} ${filter.value} <span class="remove-filter" data-filter="${filter.name}">&times;</span>
-                  </span>
-                `;
-                listFilters.push(labelHtml)
-              });
-              let clearAllFilters = `
-                <button type="button" class="btn btn-secondary btn-sm btn-clear-all-filters">Clear all Filters</button>
-              `
-              listFilters.push(clearAllFilters)
-              let filtersHtml = listFilters.join('');
-
-              $('#filterLabels').append(filtersHtml);
-            }
+            reLoadFilter()
             $("#advancedSearchModal").modal("hide");
             $("#apply-search-form").trigger("submit");
 
@@ -426,17 +442,17 @@
           window.addEventListener('load', function () {
             document.getElementById('customSearchBox').style.visibility = 'visible';
           });
-          // $(document).on('click', '.remove-filter', function(e) {
-          //   e.preventDefault()
-          //   let filter = $(this).data('filter');
-          //   $(`input[name="${filter}"]`).val('');
-          //   searchForm.dispatchEvent(new Event('submit'));
-          // });
-          // $(document).on('click', '.btn-clear-all-filters', function(e) {
-          //   e.preventDefault()
-          //   $('#search-form').find('input[type="text"], select').val('')
-          //   searchForm.dispatchEvent(new Event('submit'));
-          // });
+          $(document).on('click', '.remove-filter', function(e) {
+            e.preventDefault()
+            let filter = $(this).data('filter');
+            $(`#search-form input[name="${filter}"]`).val('');
+            searchForm.dispatchEvent(new Event('submit'));
+          });
+          $(document).on('click', '.btn-clear-all-filters', function(e) {
+            e.preventDefault()
+            $('#search-form').find('input[type="text"], select').val('')
+            searchForm.dispatchEvent(new Event('submit'));
+          });
         });
 
 
