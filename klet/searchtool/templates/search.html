@@ -147,10 +147,16 @@
 
               </div>
             </div>
-          </div>        
+          </div>
+
           <div id="customSearchContainer" class="mb-3">
             <form method="get" id="apply-search-form" action="javascript:void(0)">
-              <input type="text" id="customSearchBox" placeholder="Search..." class="form-control">
+              <div class="input-group">
+                  <input type="text" id="customSearchBox" placeholder="Search..." class="form-control mr-1">
+                  <button type="button" class="btn bg-transparent btn-clear-all-filters" style="margin-left: -40px; z-index: 100;">
+                    <i class="fa fa-times"></i>
+                  </button>
+              </div>
             </form>
           </div>
           <div id="filterLabels"></div>
@@ -226,10 +232,7 @@
               `;
               listFilters.push(labelHtml)
             });
-            let clearAllFilters = `
-              <button type="button" class="btn btn-secondary btn-sm btn-clear-all-filters">Clear all Filters</button>
-            `
-            listFilters.push(clearAllFilters)
+
             let filtersHtml = listFilters.join('');
 
             $('#filterLabels').append(filtersHtml);
