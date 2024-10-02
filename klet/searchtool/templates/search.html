@@ -262,7 +262,7 @@
                   d.end_date = $("#search-form input[name='end_date']").val();
                   d.year = $("#search-form input[name='year']").val();
                   d.sourceTitle = $("#search-form input[name='sourceTitle']").val();
-                  d.genre = $("#search-form input[name='genre']").val();
+                  d.genre = $("#search-form [name='genre']").val();
                   d.publisher = $("#search-form input[name='publisher']").val();
                   return d
                 }
@@ -445,7 +445,7 @@
           $(document).on('click', '.remove-filter', function(e) {
             e.preventDefault()
             let filter = $(this).data('filter');
-            $(`#search-form input[name="${filter}"]`).val('');
+            $(`#search-form [name="${filter}"]`).val('');
             searchForm.dispatchEvent(new Event('submit'));
           });
           $(document).on('click', '.btn-clear-all-filters', function(e) {

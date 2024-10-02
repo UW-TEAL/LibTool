@@ -4,6 +4,18 @@ from django import forms
 from .models import *
 
 class RecordFilter(django_filters.FilterSet):
+	GENRE = [ ('Fiction','Fiction'),
+			('Poetry','Poetry'),
+			('Essay','Essay'),
+			('Play','Play'),
+			('Graphic Novel', 'Graphic Novel'),
+			("Children’s Literature","Children’s Literature"),
+			('Classic_General','Classic_General'),
+			('Classic_Poetry','Classic_Poetry'),
+			('Classic_History','Classic_History'),
+			('Classic_Folk Tale','Classic_Folk Tale'),
+			('Classic_Fiction','Classic_Fiction'),
+			('Misc','Misc')]	
 	authorEnglish2 = CharFilter(label='Author Name (Eng)',field_name='authorEnglish2', lookup_expr='icontains',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	authorKorean  = CharFilter(label='Author Name (Korean)',field_name='authorKorean', lookup_expr='icontains',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	workTitle  = CharFilter(label='Translation Title',field_name='workTitle', lookup_expr='icontains',widget=forms.TextInput(attrs={'class': 'form-group'}))
@@ -14,7 +26,8 @@ class RecordFilter(django_filters.FilterSet):
 	start_date  = NumberFilter(label='From Published Year',field_name='year', lookup_expr='gte',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	end_date  = NumberFilter(label='To Published Year',field_name='year', lookup_expr='lte',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	year  = NumberFilter(label='Published Year =',field_name='year', lookup_expr='icontains',widget=forms.TextInput(attrs={'class': 'form-group'}))
-	# Year  = NumberFilter(field_name='yearCreated', lookup_expr='iexact',widget=forms.TextInput(attrs={"max_length":"100","style":"width:450px;margin-left:25px;margin-right:25px;margin-top:10px"}))
+	genre = django_filters.ChoiceFilter(label='Genre', field_name='genre',choices=GENRE, lookup_expr='icontains', widget=forms.Select(attrs={'class': 'form-group'}))
+
 	class Meta:
 		model = Record
 		fields = ['authorEnglish2','authorKorean','workTitle', 'workTitleKorean', 'translator', 'start_date', 'end_date', 'year', 'sourceTitle', 'genre']
