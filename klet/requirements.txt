@@ -50,5 +50,3 @@ zipp==3.17.0
 pymysql==1.1.1
 django-import-export==4.1.1
 cryptography==39.0.1
-elasticsearch==7.10.0
-django-elasticsearch-dsl==8.0

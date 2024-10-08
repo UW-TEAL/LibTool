@@ -107,30 +107,24 @@ class SearchToolDataTable:
           ).values_list('authorKorean', flat=True).distinct()
           records = records.filter(authorKorean__in=authorKorean_arr)
           self.query_params.pop('authorEnglish2', None)
+
         myFilter = RecordFilter(self.query_params, queryset = records)
         records = myFilter.qs
         if len(self.keyword) > 0:
+            records = records.filter(
+                Q(workTitle__icontains= self.keyword) |
+                Q(workTitleKorean__icontains= self.keyword) |
+                Q(authorKorean__icontains= self.keyword) |
+                Q(authorEnglish__icontains= self.keyword) |
+                Q(translator__icontains= self.keyword) |
+                Q(sourceTitle__icontains= self.keyword) |
+                Q(publisher__icontains= self.keyword) |
+                Q(year__icontains= self.keyword) |
+                Q(genre__icontains= self.keyword)
+            )
+        total_records = records.count()
 
-            filtered_ids = list(records.values_list('id', flat=True))
-            search = RecordDocument.search().query(
-                "multi_match",
-                query=self.keyword,
-                fields=[
-                    'workTitle', 'workTitleKorean', 'authorKorean',
-                    'authorEnglish', 'translator', 'sourceTitle',
-                    'publisher', 'year', 'genre'
-                ],
-                type="cross_fields",
-                minimum_should_match="95%"
-            ).filter("terms", id=filtered_ids).extra(size=self.length, from_=self.start)
-
-            response = search.execute()
-            total_records = response.hits.total['value']
-            records = search.to_queryset()
-        else:
-            total_records = records.count()
-
-        # records = records[self.start:self.start + self.length]
+        records = records[self.start:self.start + self.length]
         return total_records, records
 
 
