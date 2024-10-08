@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'import_export'
+    'import_export',
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,12 @@ DATABASES = {
         'HOST': 'libtooldatabase.cryiegg6w7p6.us-east-1.rds.amazonaws.com',  # Or your database server (e.g., AWS RDS endpoint)
         'PORT': '3306',
     }
+}
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://localhost:9200'  # Include the 'http://' part here
+    },
 }
 
 

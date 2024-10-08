@@ -4,6 +4,8 @@ from django.db.models import Sum, F, FloatField
 import uuid
 
 
+from django_elasticsearch_dsl import Document, Index, fields
+from django_elasticsearch_dsl.registries import registry
 class AuthorEnglish(models.Model):
 	name = models.CharField(max_length=255)
 	first_name = models.CharField(max_length=255)
@@ -109,3 +111,29 @@ class Users(models.Model):
 	userName = models.CharField(max_length=100, null=False, blank=False )
 	userPassword = models.CharField(max_length=100, null=False, blank=False )
 	userEmail = models.CharField(max_length=100, null=True, blank=True, default="" )
+
+records_index = Index('records')  # Name your index here
+
+# Optionally configure settings for the index
+records_index.settings(
+    number_of_shards=1,
+    number_of_replicas=1,
+)
+@registry.register_document
+class RecordDocument(Document):
+    class Index:
+        # Name of the Elasticsearch index
+        name = 'records'
+        # Custom settings for the index
+        settings = {
+          'number_of_shards': 1,
+          'number_of_replicas': 0
+        }
+
+    class Django:
+        model = Record
+        fields = [
+            'workTitle', 'workTitleKorean', 'authorKorean',
+            'authorEnglish', 'translator', 'sourceTitle',
+            'publisher', 'year', 'genre', 'id'
+        ]

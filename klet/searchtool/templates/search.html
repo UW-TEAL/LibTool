@@ -101,7 +101,15 @@
   }*/
 </style>
 
-
+<head>
+ <meta charset="UTF-8">
+ <!-- <link rel="stylesheet" href='/searchtool/templates/style/customstyle.css'> -->
+ <!-- <link rel='stylesheet'
+   href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'> -->
+   <link href="https://cdn.datatables.net/v/bs4/dt-2.1.7/datatables.min.css" rel="stylesheet">
+ <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> -->
+ <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
 
 <div class='row'>
   <div class="col-lg-10" style="height: max-content;">
@@ -186,8 +194,7 @@
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
+      <script src="https://cdn.datatables.net/v/bs4/dt-2.1.7/datatables.min.js"></script>
       <script src="{% static 'js/jquery.mark.min.js' %}"></script>
       <script>
         function showDiv() {
@@ -340,7 +347,7 @@
                   }
                   return searchWords;
                 });
-                $('#sort tbody').unmark().mark(fullTextArrs.get(), {"accuracy": "exactly"});
+                $('#sort tbody').unmark().mark(fullTextArrs.get());
               }
 
 
@@ -353,7 +360,7 @@
             });
 
             // Ensure placeholder is set for any form-control element if not specifically targeting
-            $(".form-control, .form-control-sm").attr("placeholder", "Search for any key word");
+            $(".form-control, .form-control-sm").attr("placeholder", "Search anything");
 
             // Insert "Search:" text before the search box
             if ($('#customSearchBox').prev('label.search-label').length === 0) {
