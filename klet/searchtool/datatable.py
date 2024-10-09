@@ -129,8 +129,7 @@ class SearchToolDataTable:
             records = search.to_queryset()
         else:
             total_records = records.count()
-
-        # records = records[self.start:self.start + self.length]
+            records = records[self.start:self.start + self.length]
         return total_records, records
 
 
