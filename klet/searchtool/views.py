@@ -32,7 +32,7 @@ def search(request):
 
     author_englishs = (
         AuthorEnglish.objects
-        .order_by('last_name')            # Order by 'last_name'
+        .order_by('last_name', 'first_name')            # Order by 'last_name'
         .distinct()                       # Remove duplicates
         .filter(name__isnull=False)       # Filter out empty names
         .filter(name__gt='')              # Filter out empty strings
