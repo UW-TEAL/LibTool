@@ -90,7 +90,8 @@ DATABASES = {
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://localhost:9200'  # Include the 'http://' part here
+        'hosts': 'http://localhost:9200',
+        'timeout': 120,
     },
 }
 
