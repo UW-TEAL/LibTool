@@ -8,7 +8,6 @@ class RecordFilter(django_filters.FilterSet):
 			('Poetry','Poetry'),
 			('Essay','Essay'),
 			('Play','Play'),
-			('Graphic Novel', 'Graphic Novel'),
 			("Children’s Literature","Children’s Literature"),
 			('Classic_General','Classic_General'),
 			('Classic_Poetry','Classic_Poetry'),
@@ -26,7 +25,7 @@ class RecordFilter(django_filters.FilterSet):
 	start_date  = NumberFilter(label='From Published Year',field_name='year', lookup_expr='gte',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	end_date  = NumberFilter(label='To Published Year',field_name='year', lookup_expr='lte',widget=forms.TextInput(attrs={'class': 'form-group'}))
 	year  = NumberFilter(label='Published Year =',field_name='year', lookup_expr='icontains',widget=forms.TextInput(attrs={'class': 'form-group'}))
-	genre = django_filters.ChoiceFilter(label='Genre', field_name='genre',choices=GENRE, lookup_expr='icontains', widget=forms.Select(attrs={'class': 'form-group'}))
+	genre = django_filters.ChoiceFilter(label='Genre', field_name='genre',choices=GENRE, lookup_expr='exact', widget=forms.Select(attrs={'class': 'form-group'}))
 
 	class Meta:
 		model = Record
