@@ -50,6 +50,7 @@ class SearchToolDataTable:
         }
         self.query_params = {key: value for key, value in self.query_params.items() if value is not None}
 
+
     def reponse_data(self):
         total_records, records = self.filter_records()
 
@@ -110,9 +111,14 @@ class SearchToolDataTable:
         myFilter = RecordFilter(self.query_params, queryset = records)
         records = myFilter.qs
         if len(self.keyword) > 0:
+            if self.isEnglish(self.keyword):
+              document =  RecordDocument
+            else:
+              document = RecordDocumentEnglishFilter
 
             filtered_ids = list(records.values_list('id', flat=True))
-            search = RecordDocument.search().query(
+            sort_field = f"{self.orderColumn}.keyword"
+            search = document.search().sort(sort_field).query(
                 "multi_match",
                 query=self.keyword,
                 fields=[
@@ -121,12 +127,14 @@ class SearchToolDataTable:
                     'publisher', 'year', 'genre'
                 ],
                 type="cross_fields",
-                minimum_should_match="95%"
+                operator="AND"
             ).filter("terms", id=filtered_ids).extra(size=self.length, from_=self.start)
 
             response = search.execute()
             total_records = response.hits.total['value']
             records = search.to_queryset()
+            print(f">>>>>>>>>>>>>>>>>>>#{self.orderColumn}")
+            print(f">>>>>>>>>>>data: #{records.values_list('sourceTitle')}")
         else:
             total_records = records.count()
             records = records[self.start:self.start + self.length]
@@ -155,3 +163,10 @@ class SearchToolDataTable:
         #     'records': paginated_records,
         #     'total': total_records
         # }
+    def isEnglish(self, s):
+        try:
+            s.encode(encoding='utf-8').decode('ascii')
+        except UnicodeDecodeError:
+            return False
+        else:
+            return True

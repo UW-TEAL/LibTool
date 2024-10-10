@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum, F, FloatField
 # Create your models here.
 import uuid
+from elasticsearch_dsl import analyzer, tokenizer
 
 
 from django_elasticsearch_dsl import Document, Index, fields
@@ -119,21 +120,156 @@ records_index.settings(
     number_of_shards=1,
     number_of_replicas=1,
 )
+
+edge_ngram_tokenizer = tokenizer(
+    'edge_ngram_tokenizer',
+    type='edge_ngram',
+    min_gram=1,
+    max_gram=10,
+    token_chars=["letter", "digit"]
+)
+
+custom_analyzer = analyzer(
+    'custom_analyzer',
+    tokenizer=edge_ngram_tokenizer
+)
 @registry.register_document
 class RecordDocument(Document):
+    authorKorean = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    authorEnglish = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    workTitle = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    workTitleKorean = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    genre = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    translator = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    sourceTitle = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    publisher = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    year = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })
+    id = fields.TextField(analyzer=custom_analyzer, fields={
+            'keyword': fields.KeywordField()
+        })  
+
     class Index:
         # Name of the Elasticsearch index
         name = 'records'
         # Custom settings for the index
         settings = {
-          'number_of_shards': 1,
-          'number_of_replicas': 0
+            'number_of_shards': 1,
+            'number_of_replicas': 0,
+            'analysis': {
+                'tokenizer': {
+                    'edge_ngram_tokenizer': {
+                        'type': 'edge_ngram',
+                        'min_gram': 1,
+                        'max_gram': 10,
+                        'token_chars': [
+                            'letter',
+                            'digit'
+                        ]
+                    }
+                },
+                'analyzer': {
+                    'custom_analyzer': {
+                        'type': 'custom',
+                        'tokenizer': 'edge_ngram_tokenizer'
+                    }
+                }
+            }
         }
 
     class Django:
         model = Record
-        fields = [
-            'workTitle', 'workTitleKorean', 'authorKorean',
-            'authorEnglish', 'translator', 'sourceTitle',
-            'publisher', 'year', 'genre', 'id'
-        ]
+
+
+edge_ngram_tokenizer_english = tokenizer(
+    'edge_ngram_tokenizer_english',
+    type='edge_ngram',
+    min_gram=3,
+    max_gram=10,
+    token_chars=["letter", "digit"]
+)
+
+custom_analyzer_english = analyzer(
+    'custom_analyzer_english',
+    tokenizer=edge_ngram_tokenizer_english
+)
+@registry.register_document
+class RecordDocumentEnglishFilter(Document):
+    authorKorean = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    authorEnglish = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    workTitle = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    workTitleKorean = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    genre = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    translator = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    sourceTitle = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    publisher = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    year = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })
+    id = fields.TextField(analyzer=custom_analyzer_english, fields={
+            'keyword': fields.KeywordField()
+        })  
+
+    class Index:
+        # Name of the Elasticsearch index
+        name = 'records'
+        # Custom settings for the index
+        settings = {
+            'number_of_shards': 1,
+            'number_of_replicas': 0,
+            'analysis': {
+                'tokenizer': {
+                    'edge_ngram_tokenizer': {
+                        'type': 'edge_ngram',
+                        'min_gram': 3,
+                        'max_gram': 10,
+                        'token_chars': [
+                            'letter',
+                            'digit'
+                        ]
+                    }
+                },
+                'analyzer': {
+                    'custom_analyzer_english': {
+                        'type': 'custom',
+                        'tokenizer': 'edge_ngram_tokenizer'
+                    }
+                }
+            }
+        }
+
+    class Django:
+        model = Record
