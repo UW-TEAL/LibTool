@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import pandas as pd
 import re
 from .models import *
@@ -175,6 +175,13 @@ def changeAnything(request):
 def adminLogin(request):
     context = {'message': 'Admin Portal in making'}
     return render(request, 'admin.html', context)
+
+def create_request_record(request):
+    if request.method == 'POST':
+        form = NewRecordForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('search')
 
 def export_selected_to_excel(request):
     if request.method == 'POST':

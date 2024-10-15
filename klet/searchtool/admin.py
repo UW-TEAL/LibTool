@@ -32,5 +32,11 @@ class AuthorEnglishAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_per_page = 50
 
+class AddRequestAdmin(admin.ModelAdmin):
+    list_display = ("workTitleKorean", "workTitle", "authorKorean",  "authorEnglish",  "translator",  "genre",  "sourceTitle",  "publisher",  "year",  "other", "accepted" )
+    search_fields = ("workTitleKorean", "workTitle", "authorKorean",  "authorEnglish",  "translator",  "genre",  "sourceTitle",  "publisher",  "year",  "other" )
+
+
 admin.site.register(Record, RecordAdmin)
+admin.site.register(AddRequest, AddRequestAdmin)
 admin.site.register(AuthorEnglish, AuthorEnglishAdmin)

@@ -12,5 +12,6 @@ urlpatterns = [
     path('populateAlternames/',views.populateAlternateNames),
     path('updateRec/',views.changeAnything),
     path('admin/', views.adminLogin),
-    path('export_selected_to_excel/', export_selected_to_excel, name='export_selected_to_excel')
+    path('export_selected_to_excel/', export_selected_to_excel, name='export_selected_to_excel'),
+    path('create_request_record/', views.create_request_record, name='create_request_record')
 ]

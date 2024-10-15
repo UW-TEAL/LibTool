@@ -396,10 +396,6 @@
               "border-radius": "5px"  // This ensures vertical alignment if needed
             });
 
-            $('#requestFormModal').on('shown.bs.modal', function () {
-              $('#myInput').trigger('focus');
-            });
-
             // Simplified clear search event handling
             $('#clear-search').click(function (event) {
               event.preventDefault();
@@ -497,24 +493,24 @@
         </button>
       </div>
 
-      <div class="modal fade" id="requestFormModal" tabindex="-1" role="dialog"
-        aria-labelledby="requestFormModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal fade bd-example-modal-lg" id="requestFormModal" tabindex="-1" role="dialog" aria-labelledby="requestFormModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">New record request form</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h2>Submit a New Add Request</h2>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="request-record-form" action="/searchtool/create_request_record/">
+                    {% csrf_token %}
+                    {{ requestForm.as_p }}  
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
 
-            <div class="modal-body">
-              <h2>Submit a New Add Request</h2>
-              <form method="post">
-                  {% csrf_token %}
-                  {{ requestForm.as_p }}  
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Submit</button>
-              </form>
-            </div>
           </div>
         </div>
       </div>

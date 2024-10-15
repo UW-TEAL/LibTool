@@ -133,8 +133,6 @@ class SearchToolDataTable:
             response = search.execute()
             total_records = response.hits.total['value']
             records = search.to_queryset()
-            print(f">>>>>>>>>>>>>>>>>>>#{self.orderColumn}")
-            print(f">>>>>>>>>>>data: #{records.values_list('sourceTitle')}")
         else:
             total_records = records.count()
             records = records[self.start:self.start + self.length]
