@@ -359,8 +359,7 @@
               "background-color": "#FFFFFF" // Set background to white
             });
 
-            // Ensure placeholder is set for any form-control element if not specifically targeting
-            $(".form-control, .form-control-sm").attr("placeholder", "Search anything");
+            $("#customSearchBox").attr("placeholder", "Search anything");
 
             // Insert "Search:" text before the search box
             if ($('#customSearchBox').prev('label.search-label').length === 0) {
