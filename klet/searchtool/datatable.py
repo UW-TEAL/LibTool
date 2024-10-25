@@ -112,9 +112,9 @@ class SearchToolDataTable:
         records = myFilter.qs
         if len(self.keyword) > 0:
             if self.isEnglish(self.keyword):
-              document =  RecordDocument
+              document =  RecordDocumentEnglishFilter
             else:
-              document = RecordDocumentEnglishFilter
+              document = RecordDocument
 
             filtered_ids = list(records.values_list('id', flat=True))
             sort_field = f"{self.orderColumn}.keyword"
