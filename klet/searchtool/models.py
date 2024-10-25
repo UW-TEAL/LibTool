@@ -118,17 +118,17 @@ records_index.settings(
     number_of_replicas=1,
 )
 
-edge_ngram_tokenizer = tokenizer(
-    'edge_ngram_tokenizer',
-    type='edge_ngram',
+ngram_tokenizer = tokenizer(
+    'ngram_tokenizer',
+    type='ngram',
     min_gram=1,
-    max_gram=10,
+    max_gram=5,
     token_chars=["letter", "digit"]
 )
 
 custom_analyzer = analyzer(
     'custom_analyzer',
-    tokenizer=edge_ngram_tokenizer
+    tokenizer=ngram_tokenizer
 )
 @registry.register_document
 class RecordDocument(Document):
@@ -170,22 +170,23 @@ class RecordDocument(Document):
         settings = {
             'number_of_shards': 1,
             'number_of_replicas': 0,
+            'max_ngram_diff': 5,
             'analysis': {
                 'tokenizer': {
-                    'edge_ngram_tokenizer': {
-                        'type': 'edge_ngram',
+                    'ngram_tokenizer': {
+                        'type': 'ngram',
                         'min_gram': 1,
-                        'max_gram': 10,
+                        'max_gram': 5,
                         'token_chars': [
                             'letter',
-                            'digit'
+                            'digit',
                         ]
                     }
                 },
                 'analyzer': {
                     'custom_analyzer': {
                         'type': 'custom',
-                        'tokenizer': 'edge_ngram_tokenizer'
+                        'tokenizer': 'ngram_tokenizer'
                     }
                 }
             }
@@ -242,7 +243,7 @@ class RecordDocumentEnglishFilter(Document):
 
     class Index:
         # Name of the Elasticsearch index
-        name = 'records'
+        name = 'records_english'
         # Custom settings for the index
         settings = {
             'number_of_shards': 1,
