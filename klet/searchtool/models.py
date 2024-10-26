@@ -243,7 +243,7 @@ class RecordDocumentEnglishFilter(Document):
 
     class Index:
         # Name of the Elasticsearch index
-        name = 'records_english'
+        name = 'records'
         # Custom settings for the index
         settings = {
             'number_of_shards': 1,
