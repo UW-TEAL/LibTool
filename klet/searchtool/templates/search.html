@@ -96,6 +96,13 @@
     border-radius: 10px !important;
     margin-bottom: 5px !important;
 	}
+  div.dataTables_processing>div:last-child>div{
+    background-color:#0067ff ;
+  }
+  .btn-clear-all-filters:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 /*  #requestFormModal{
     opacity: 1
   }*/
@@ -106,7 +113,6 @@
  <!-- <link rel="stylesheet" href='/searchtool/templates/style/customstyle.css'> -->
  <!-- <link rel='stylesheet'
    href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'> -->
-   <link href="https://cdn.datatables.net/v/bs4/dt-2.1.7/datatables.min.css" rel="stylesheet">
  <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> -->
  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 </head>
@@ -293,13 +299,10 @@
               "columnDefs": [
                 { "orderable": false, "targets": 0 }, // Disables sorting on the first column
                 { "orderable": false, "targets": 10 } // Disables sorting on the last column
-              ],
-              language: {
-                  processing: '<div class="custom-loader"></div>' // Add a custom loader here
-              }
+              ]
 
             });
-
+            $(".dataTables_processing").removeClass("card")
             $("#apply-search-form").on("submit", function(e){
               e.preventDefault();
               var searchValue = $("#customSearchBox").val()
