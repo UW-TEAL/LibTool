@@ -118,48 +118,44 @@ records_index.settings(
     number_of_replicas=1,
 )
 
-ngram_tokenizer = tokenizer(
-    'ngram_tokenizer',
-    type='ngram',
-    min_gram=1,
-    max_gram=5,
-    token_chars=["letter", "digit"]
+
+korean_analyzer =analyzer(
+    'korean_analyzer',
+    tokenizer="nori_tokenizer",
+    type= "custom",
 )
 
-custom_analyzer = analyzer(
-    'custom_analyzer',
-    tokenizer=ngram_tokenizer
-)
+
 @registry.register_document
 class RecordDocument(Document):
-    authorKorean = fields.TextField(analyzer=custom_analyzer, fields={
+    authorKorean = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    authorEnglish = fields.TextField(analyzer=custom_analyzer, fields={
+    authorEnglish = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    workTitle = fields.TextField(analyzer=custom_analyzer, fields={
+    workTitle = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    workTitleKorean = fields.TextField(analyzer=custom_analyzer, fields={
+    workTitleKorean = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    genre = fields.TextField(analyzer=custom_analyzer, fields={
+    genre = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    translator = fields.TextField(analyzer=custom_analyzer, fields={
+    translator = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    sourceTitle = fields.TextField(analyzer=custom_analyzer, fields={
+    sourceTitle = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    publisher = fields.TextField(analyzer=custom_analyzer, fields={
+    publisher = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    year = fields.TextField(analyzer=custom_analyzer, fields={
+    year = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })
-    id = fields.TextField(analyzer=custom_analyzer, fields={
+    id = fields.TextField( fields={
             'keyword': fields.KeywordField()
         })  
 
@@ -172,98 +168,10 @@ class RecordDocument(Document):
             'number_of_replicas': 0,
             'max_ngram_diff': 5,
             'analysis': {
-                'tokenizer': {
-                    'ngram_tokenizer': {
-                        'type': 'ngram',
-                        'min_gram': 1,
-                        'max_gram': 5,
-                        'token_chars': [
-                            'letter',
-                            'digit',
-                        ]
-                    }
-                },
                 'analyzer': {
-                    'custom_analyzer': {
-                        'type': 'custom',
-                        'tokenizer': 'ngram_tokenizer'
-                    }
-                }
-            }
-        }
-
-    class Django:
-        model = Record
-
-
-edge_ngram_tokenizer_english = tokenizer(
-    'edge_ngram_tokenizer_english',
-    type='edge_ngram',
-    min_gram=3,
-    max_gram=10,
-    token_chars=["letter", "digit"]
-)
-
-custom_analyzer_english = analyzer(
-    'custom_analyzer_english',
-    tokenizer=edge_ngram_tokenizer_english
-)
-@registry.register_document
-class RecordDocumentEnglishFilter(Document):
-    authorKorean = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    authorEnglish = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    workTitle = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    workTitleKorean = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    genre = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    translator = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    sourceTitle = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    publisher = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    year = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })
-    id = fields.TextField(analyzer=custom_analyzer_english, fields={
-            'keyword': fields.KeywordField()
-        })  
-
-    class Index:
-        # Name of the Elasticsearch index
-        name = 'records'
-        # Custom settings for the index
-        settings = {
-            'number_of_shards': 1,
-            'number_of_replicas': 0,
-            'analysis': {
-                'tokenizer': {
-                    'edge_ngram_tokenizer': {
-                        'type': 'edge_ngram',
-                        'min_gram': 3,
-                        'max_gram': 10,
-                        'token_chars': [
-                            'letter',
-                            'digit'
-                        ]
-                    }
-                },
-                'analyzer': {
-                    'custom_analyzer_english': {
-                        'type': 'custom',
-                        'tokenizer': 'edge_ngram_tokenizer'
+                    "korean_analyzer": {
+                      "type": "custom",
+                      "tokenizer": "nori_tokenizer"
                     }
                 }
             }

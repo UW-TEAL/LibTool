@@ -111,14 +111,9 @@ class SearchToolDataTable:
         myFilter = RecordFilter(self.query_params, queryset = records)
         records = myFilter.qs
         if len(self.keyword) > 0:
-            if self.isEnglish(self.keyword):
-              document =  RecordDocumentEnglishFilter
-            else:
-              document = RecordDocument
-
             filtered_ids = list(records.values_list('id', flat=True))
             sort_field = f"{self.orderColumn}.keyword"
-            search = document.search().sort(sort_field).query(
+            search = RecordDocument.search().sort(sort_field).query(
                 "multi_match",
                 query=self.keyword,
                 fields=[
