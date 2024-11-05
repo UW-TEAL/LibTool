@@ -131,31 +131,31 @@ class RecordDocument(Document):
     authorKorean = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    authorEnglish = fields.TextField( fields={
+    authorEnglish = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    workTitle = fields.TextField( fields={
+    workTitle = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
     workTitleKorean = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    genre = fields.TextField( fields={
+    genre = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    translator = fields.TextField( fields={
+    translator = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    sourceTitle = fields.TextField( fields={
+    sourceTitle = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    publisher = fields.TextField( fields={
+    publisher = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    year = fields.TextField( fields={
+    year = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    id = fields.TextField( fields={
+    id = fields.TextField(analyzer=korean_analyzer, fields={
             'keyword': fields.KeywordField()
         })  
 
