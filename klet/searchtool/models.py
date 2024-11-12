@@ -123,6 +123,7 @@ korean_analyzer =analyzer(
     'korean_analyzer',
     tokenizer="nori_tokenizer",
     type= "custom",
+    filter= ["lowercase"]
 )
 
 
@@ -171,7 +172,8 @@ class RecordDocument(Document):
                 'analyzer': {
                     "korean_analyzer": {
                       "type": "custom",
-                      "tokenizer": "nori_tokenizer"
+                      "tokenizer": "nori_tokenizer",
+                      "filter": ["lowercase"]
                     }
                 }
             }
