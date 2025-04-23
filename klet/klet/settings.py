@@ -92,6 +92,7 @@ ELASTICSEARCH_DSL = {
     'default': {
         'hosts': 'http://localhost:9200',
         'timeout': 120,
+        'http_auth': ('elastic', 'UG4dFcNjReaJMmowS2b4'),
     },
 }
 
