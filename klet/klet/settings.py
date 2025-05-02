@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -81,9 +82,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "teal",
-        'USER': 'admin',
-        'PASSWORD': 'UWteal2023',
-        'HOST': 'libtooldatabase.cryiegg6w7p6.us-east-1.rds.amazonaws.com',  # Or your database server (e.g., AWS RDS endpoint)
+        'USER': os.environ.get("DATABASE_USER", ""),
+        'PASSWORD': os.environ.get("DATABASE_PASSWORD", ""),
+        'HOST': os.environ.get("DATABASE_HOST", ""),  # Or your database server (e.g., AWS RDS endpoint)
         'PORT': '3306',
     }
 }
@@ -92,6 +93,7 @@ ELASTICSEARCH_DSL = {
     'default': {
         'hosts': 'http://localhost:9200',
         'timeout': 120,
+        'http_auth': ('elastic', os.environ.get("ELASTICSEARCH_PASSWORD", "")),
     },
 }
 
