@@ -119,44 +119,44 @@ records_index.settings(
 )
 
 
-korean_analyzer =analyzer(
-    'korean_analyzer',
-    tokenizer="nori_tokenizer",
-    type= "custom",
-    filter= ["lowercase"]
-)
-
+# korean_analyzer =analyzer(
+#     'korean_analyzer',
+#     tokenizer="nori_tokenizer",
+#     type= "custom",
+#     filter= ["lowercase"]
+# )
+common_analyzer = analyzer('korean_english_analyzer')
 
 @registry.register_document
 class RecordDocument(Document):
-    authorKorean = fields.TextField(analyzer=korean_analyzer, fields={
+    authorKorean = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    authorEnglish = fields.TextField(analyzer=korean_analyzer, fields={
+    authorEnglish = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    workTitle = fields.TextField(analyzer=korean_analyzer, fields={
+    workTitle = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    workTitleKorean = fields.TextField(analyzer=korean_analyzer, fields={
+    workTitleKorean = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    genre = fields.TextField(analyzer=korean_analyzer, fields={
+    genre = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    translator = fields.TextField(analyzer=korean_analyzer, fields={
+    translator = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    sourceTitle = fields.TextField(analyzer=korean_analyzer, fields={
+    sourceTitle = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    publisher = fields.TextField(analyzer=korean_analyzer, fields={
+    publisher = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    year = fields.TextField(analyzer=korean_analyzer, fields={
+    year = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })
-    id = fields.TextField(analyzer=korean_analyzer, fields={
+    id = fields.TextField(analyzer=common_analyzer, fields={
             'keyword': fields.KeywordField()
         })  
 
@@ -169,10 +169,15 @@ class RecordDocument(Document):
             'number_of_replicas': 0,
             'max_ngram_diff': 5,
             'analysis': {
+				'tokenizer': {
+					'korean_english_tokenizer': {
+						'type': 'standard'  # hoặc "whitespace"
+					}
+				},
                 'analyzer': {
-                    "korean_analyzer": {
+                    "korean_english_analyzer": {
                       "type": "custom",
-                      "tokenizer": "nori_tokenizer",
+                      "tokenizer": "korean_english_tokenizer",
                       "filter": ["lowercase"]
                     }
                 }

@@ -106,18 +106,15 @@ class SearchToolDataTable:
             Q(authorEnglish__icontains=authorEnglish2Filter) | 
             Q(authorEnglish2__icontains=authorEnglish2Filter)
           ).values_list('authorKorean', flat=True).distinct()
-
-          if all(val and val.strip() for val in authorKorean_arr):
+          if len(authorKorean_arr) > 0 and all(val and val.strip() for val in authorKorean_arr):
             records = records.filter(authorKorean__in=authorKorean_arr)
           else:
-            records = records.filter(
-              Q(authorEnglish__icontains=authorEnglish2Filter) | 
-              Q(authorEnglish2__icontains=authorEnglish2Filter)
-            )
+            self.keyword = authorEnglish2Filter
           self.query_params.pop('authorEnglish2', None)
           
         myFilter = RecordFilter(self.query_params, queryset = records)
         records = myFilter.qs
+
         if len(self.keyword) > 0:
             filtered_ids = list(records.values_list('id', flat=True))
             sort_field = f"{self.orderColumn}.keyword"
