@@ -24,7 +24,7 @@ class SearchToolDataTable:
 
         requestOrder = request_params.get("order[0][column]", None)
         if requestOrder and int(requestOrder) == 0:
-          requestOrder = 4
+          requestOrder = 8
         self.orderColumn = None
 
         if requestOrder:
@@ -75,6 +75,8 @@ class SearchToolDataTable:
     def check_value_is_nan(self, value):
         if value == "nan":
             return None
+        elif isinstance(value, str) and (value.startswith('http://') or value.startswith('https://')):
+            return f'<a href="{value}" target="_blank" rel="noopener noreferrer">{value}</a>'
         else:
             return value
 
