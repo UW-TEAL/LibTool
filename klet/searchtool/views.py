@@ -21,7 +21,7 @@ def home(request):
 
 def search(request):
 
-    records = Record.objects.all().order_by('year')
+    records = Record.objects.all().order_by('-year')
     namesKr = []
     for i in records:
         if i.authorKorean  and i.authorKorean!= "nan":

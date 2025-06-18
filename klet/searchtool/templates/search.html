@@ -174,7 +174,7 @@
             </form>
           </div>
           <div id="filterLabels"></div>
-          <table class="table responsive" id="sort" cellspacing="0" width="100%">
+          <table class="table table-responsive" id="sort" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>
@@ -308,7 +308,8 @@
                 { width: "5%", targets: 8 },
                 { width: "7%", targets: 9 },
                 { width: "7%", targets: 10 },
-              ]
+              ],
+              "order": [[8, "desc"]] // Default sorting on the "year" column in descending order
 
             });
             $(".dataTables_processing").removeClass("card")

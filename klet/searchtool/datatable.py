@@ -22,9 +22,7 @@ class SearchToolDataTable:
               'genre',
         ]
 
-        requestOrder = request_params.get("order[0][column]", None)
-        if requestOrder and int(requestOrder) == 0:
-          requestOrder = 8
+        requestOrder = request_params.get("order[0][column]")
         self.orderColumn = None
 
         if requestOrder:
